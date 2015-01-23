@@ -346,7 +346,8 @@ namespace Signum.Engine.Mailing
                 {
                     MailMessage message = CustomCreateMailMessage != null ? CustomCreateMailMessage(email) : CreateMailMessage(email);
 
-                    CreateSmtpClient(email).Send(message);
+                    var smtpc=CreateSmtpClient(email);
+                    smtpc.Send(message);
 
                     email.State = EmailMessageState.Sent;
                     email.Sent = TimeZoneManager.Now;
