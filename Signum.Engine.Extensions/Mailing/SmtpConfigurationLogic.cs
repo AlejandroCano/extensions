@@ -71,7 +71,7 @@ namespace Signum.Engine.Mailing
             SmtpClient client = EmailLogic.SafeSmtpClient(config.Host, config.Port);
 
             client.UseDefaultCredentials = config.UseDefaultCredentials;
-            client.Credentials = config.Username.HasText() ? new NetworkCredential(config.Username, config.Password) : null;
+          //  client.Credentials = config.Username.HasText() ? new NetworkCredential(config.Username, config.Password) : null;
             //client.Credentials = config.Username.HasText() ? new NetworkCredential(Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(config.Username)), Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(config.Password))) : null;
             client.Credentials = config.Username.HasText() ? new NetworkCredential(Encoding.UTF8.GetString(Encoding.Default.GetBytes(config.Username)), Encoding.UTF8.GetString(Encoding.Default.GetBytes(config.Password))) : null;
          
