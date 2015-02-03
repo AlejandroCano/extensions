@@ -159,6 +159,22 @@ namespace Signum.Engine.Mailing.Pop3
                     }
                 }.Register();
 
+
+                new Graph<Pop3ReceptionDN>.ConstructFrom<Pop3ConfigurationDN>(Pop3ConfigurationOperation.ReceiveEmailsFunction)
+                {
+                    AllowsNew = true,
+                    Lite = false,
+                    Construct = (e, _) =>
+                    {
+                        using (Transaction tr = Transaction.None())
+                        {
+                          var result=  e.ReceiveEmails();
+                            tr.Commit();
+                            return result;
+                        }
+                    }
+                }.Register();
+
                 SchedulerLogic.ExecuteTask.Register((Pop3ConfigurationDN smtp) => smtp.ReceiveEmails().ToLite());
 
                 SimpleTaskLogic.Register(Pop3ConfigurationAction.ReceiveAllActivePop3Configurations, () =>

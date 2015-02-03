@@ -102,6 +102,7 @@ namespace Signum.Entities.Mailing
     {
         public static readonly ExecuteSymbol<Pop3ConfigurationDN> Save = OperationSymbol.Execute<Pop3ConfigurationDN>();
         public static readonly ExecuteSymbol<Pop3ConfigurationDN> ReceiveEmails = OperationSymbol.Execute<Pop3ConfigurationDN>();
+        public static readonly ConstructSymbol<Pop3ReceptionDN>.From<Pop3ConfigurationDN> ReceiveEmailsFunction = OperationSymbol.Construct<Pop3ReceptionDN>.From<Pop3ConfigurationDN>();
     }
 
     public static class Pop3ConfigurationAction
