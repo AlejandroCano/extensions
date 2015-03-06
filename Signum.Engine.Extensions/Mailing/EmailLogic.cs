@@ -275,13 +275,14 @@ namespace Signum.Engine.Mailing
                         From = m.From.Clone(),
                         Recipients = m.Recipients.Select(r => r.Clone()).ToMList(),
                         Target = m.Target,
-                        Subject = m.Subject,
+                        Subject = m.Subject,                        
                         Body = m.Body,
                         IsBodyHtml = m.IsBodyHtml,
                         Template = m.Template,
                         SmtpConfiguration = m.SmtpConfiguration,
                         EditableMessage = m.EditableMessage,
-                        State = EmailMessageState.Created
+                        State = EmailMessageState.Created,
+                        Attachments=m.Attachments.ToMList(),
                     }
                 }.Register();
 
