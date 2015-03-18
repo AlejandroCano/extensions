@@ -230,7 +230,8 @@ namespace Signum.Windows.UIAutomation
 
             lastFilter.SetOperation(operation);
 
-            lastFilter.SetValueString(value);
+            if (value != null)
+                lastFilter.SetValueString(value);
 
             return lastFilter;
         }
