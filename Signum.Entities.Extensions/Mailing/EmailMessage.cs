@@ -526,11 +526,6 @@ namespace Signum.Entities.Mailing
         public static readonly ProcessAlgorithmSymbol SendEmails = new ProcessAlgorithmSymbol();
     }
 
-    public static class ScheduledEmailTask
-    {
-        public static readonly SimpleTaskSymbol SendEmails = new SimpleTaskSymbol();
-    }
-
     public static class EmailMessageOperation
     {
         public static readonly ExecuteSymbol<EmailMessageDN> Save = OperationSymbol.Execute<EmailMessageDN>();
@@ -579,6 +574,11 @@ namespace Signum.Entities.Mailing
     public static class EmailFileType
     {
         public static readonly FileTypeSymbol Attachment = new FileTypeSymbol();
+    }
+
+    public static class AsyncEmailSenderPermission
+    {
+        public static readonly PermissionSymbol ViewAsyncEmailSenderPanel = new PermissionSymbol();
     }
 }
 

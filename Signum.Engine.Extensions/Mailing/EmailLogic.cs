@@ -66,6 +66,8 @@ namespace Signum.Engine.Mailing
 
                 sb.Include<EmailMessageDN>();
 
+                PermissionAuthLogic.RegisterPermissions(AsyncEmailSenderPermission.ViewAsyncEmailSenderPanel);
+
                 dqm.RegisterQuery(typeof(EmailMessageDN), () =>
                     from e in Database.Query<EmailMessageDN>()
                     select new
@@ -250,7 +252,11 @@ namespace Signum.Engine.Mailing
                     Lite = false,
                     FromStates = { EmailMessageState.Created, EmailMessageState.Draft, EmailMessageState.SentException, EmailMessageState.RecruitedForSending },
                     ToState = EmailMessageState.ReadyToSend,
-                    Execute = (m, _) => { m.State = EmailMessageState.ReadyToSend; }
+                    Execute = (m, _) => 
+                    {
+                        m.SendRetries = 0;
+                        m.State = EmailMessageState.ReadyToSend; 
+                    }
                 }.Register();
 
                 new Execute(EmailMessageOperation.Send)

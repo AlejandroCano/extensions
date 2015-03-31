@@ -51,11 +51,6 @@ namespace Signum.Engine.Mailing
 
                 ProcessLogic.AssertStarted(sb);
                 ProcessLogic.Register(EmailMessageProcess.SendEmails, new SendEmailProcessAlgorithm());
-                SimpleTaskLogic.Register(ScheduledEmailTask.SendEmails, () =>
-                {
-                    SendScheduledEmails();
-                    return null;
-                });
 
                 new Graph<ProcessDN>.ConstructFromMany<EmailMessageDN>(EmailMessageOperation.ReSendEmails)
                 {
@@ -96,31 +91,6 @@ namespace Signum.Engine.Mailing
                         e.Id,
                         e.Name,
                     });
-            }
-        }
-
-        private static void SendScheduledEmails()
-        {
-            Guid id = Guid.NewGuid();
-            DateTime? firstDate = EmailLogic.Configuration.CreationDateHoursLimitToSendEmails == 0 ?
-                 null : (DateTime?)TimeZoneManager.Now.AddHours(-EmailLogic.Configuration.CreationDateHoursLimitToSendEmails);
-            int affected = Database.Query<EmailMessageDN>().Where(m =>
-                m.State == EmailMessageState.ReadyToSend &&
-                (firstDate == null ? true : m.CreationTime >= firstDate)).UnsafeUpdate()
-                    .Set(m => m.RecruitingGuid, m => id)
-                    .Set(m => m.State, m => EmailMessageState.RecruitedForSending)
-                    .Execute();
-            if (affected > 0)
-            {
-                EmailPackageDN emailPackage = new EmailPackageDN().Save();
-                Database.Query<EmailMessageDN>().Where(m =>
-                    m.State == EmailMessageState.RecruitedForSending &&
-                    (firstDate == null ? true : m.CreationTime >= firstDate) &&
-                    m.RecruitingGuid == id).UnsafeUpdate()
-                        .Set(m => m.Package, m => emailPackage.ToLite())
-                        .Execute();
-                var process = ProcessLogic.Create(EmailMessageProcess.SendEmails, emailPackage);
-                process.Execute(ProcessOperation.Execute);
             }
         }
     }
@@ -175,6 +145,4 @@ namespace Signum.Engine.Mailing
             }
         }
     }
-
-
 }

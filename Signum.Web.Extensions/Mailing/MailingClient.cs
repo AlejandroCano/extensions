@@ -28,6 +28,8 @@ using Signum.Entities.UserAssets;
 using Signum.Web.UserAssets;
 using Signum.Web.Basic;
 using Signum.Entities.Processes;
+using Signum.Web.Omnibox;
+using Signum.Engine.Authorization;
 #endregion
 
 namespace Signum.Web.Mailing
@@ -179,7 +181,12 @@ namespace Signum.Web.Mailing
                              UntrustedImage = null,
                              Url = RouteHelper.New(),
                         });
-                    }); 
+                    });
+
+                SpecialOmniboxProvider.Register(new SpecialOmniboxAction("AsyncEmailPanel",
+                    () => AsyncEmailSenderPermission.ViewAsyncEmailSenderPanel.IsAuthorized(),
+                    uh => uh.Action((AsyncEmailSenderController pc) => pc.View())));
+
             }
         }
 

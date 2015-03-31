@@ -58,6 +58,9 @@
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\..\Framework\Dependencies\Json.Net\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="RazorGenerator.Mvc">
+      <HintPath>..\..\packages\RazorGenerator.Mvc.2.2.3\lib\net40\RazorGenerator.Mvc.dll</HintPath>
+    </Reference>
     <Reference Include="System.Activities" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.IdentityModel" />
@@ -108,6 +111,9 @@
     <Reference Include="System.Web.Services" />
     <Reference Include="System.EnterpriseServices" />
     <Reference Include="System.Xml.Linq" />
+    <Reference Include="WebActivatorEx">
+      <HintPath>..\..\packages\WebActivatorEx.2.0.3\lib\net40\WebActivatorEx.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Alert\AlertClient.cs" />
@@ -133,6 +139,7 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
     </Compile>
+    <Compile Include="App_Start\RazorGeneratorMvcStart.cs" />
     <Compile Include="AuthAdmin\Views\Operations.generated.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -270,9 +277,15 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>_ViewStart.cshtml</DependentUpon>
     </Compile>
+    <Compile Include="Mailing\Controllers\AsyncEmailSenderController.cs" />
     <Compile Include="Mailing\Controllers\MailingController.cs" />
     <Compile Include="Mailing\Views\ClientCertificationFile.generated.cs">
       <DependentUpon>ClientCertificationFile.cshtml</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="Mailing\Views\AsyncEmailSenderDashboard.generated.cs">
+      <DependentUpon>AsyncEmailSenderDashboard.cshtml</DependentUpon>
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
     </Compile>
@@ -1156,6 +1169,7 @@
     <EmbeddedResource Include="Mailing\Scripts\Mailing.js">
       <DependentUpon>Mailing.ts</DependentUpon>
     </EmbeddedResource>
+    <TypeScriptCompile Include="Mailing\Scripts\AsyncEmailSender.ts" />
     <Content Include="Mailing\Views\_ViewStart.cshtml">
       <Generator>RazorGenerator</Generator>
       <LastGenOutput>_ViewStart.generated.cs</LastGenOutput>
@@ -1441,6 +1455,10 @@
     <Content Include="Files\Views\FilePath.cshtml">
       <Generator>RazorGenerator</Generator>
       <LastGenOutput>FilePath.generated.cs</LastGenOutput>
+    </Content>
+    <Content Include="Mailing\Views\AsyncEmailSenderDashboard.cshtml">
+      <Generator>RazorGenerator</Generator>
+      <LastGenOutput>AsyncEmailSenderDashboard.generated.cs</LastGenOutput>
     </Content>
     <None Include="Profiler\Views\Times.cshtml">
       <Generator>RazorGenerator</Generator>
