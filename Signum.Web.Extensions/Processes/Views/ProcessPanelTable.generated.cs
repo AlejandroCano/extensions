@@ -65,7 +65,7 @@ namespace Signum.Web.Extensions.Processes.Views
         {
 WriteLiteral("<div");
 
-WriteLiteral(" id=\"processMainDiv\"");
+WriteLiteral(" id=\"processTableMainDiv\"");
 
 WriteLiteral(">\r\n    <br />\r\n    State: <strong>\r\n");
 

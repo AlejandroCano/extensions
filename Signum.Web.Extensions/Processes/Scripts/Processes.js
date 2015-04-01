@@ -3,7 +3,7 @@ define(["require", "exports", "Framework/Signum.Web/Signum/Scripts/Navigator", "
     function initDashboard(url) {
         var refreshCallback = function () {
             $.get(url, function (data) {
-                $("div.processMainDiv").replaceWith(data);
+                $("div#processTableMainDiv").replaceWith(data);
             });
         };
 
