@@ -163,6 +163,20 @@ Write(Html.ValueLine(sc, ca => ca.MaxEmailSendRetries));
             
             #line 12 "..\..\Mailing\Views\EmailConfiguration.cshtml"
                                                      
+    
+            
+            #line default
+            #line hidden
+            
+            #line 13 "..\..\Mailing\Views\EmailConfiguration.cshtml"
+Write(Html.ValueLine(sc, ca => ca.AsyncSenderPeriodMilliseconds));
+
+            
+            #line default
+            #line hidden
+            
+            #line 13 "..\..\Mailing\Views\EmailConfiguration.cshtml"
+                                                               
 }
 
             

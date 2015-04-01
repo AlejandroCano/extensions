@@ -84,6 +84,7 @@ namespace Signum.Engine.Mailing
                     return;
 
                 timer.Change(Timeout.Infinite, Timeout.Infinite);
+                nextPlannedExecution = null;
 
                 using (HeavyProfiler.Log("EmailAsyncSender", () => "Execute process"))
                 using (AuthLogic.Disable())
@@ -97,7 +98,7 @@ namespace Signum.Engine.Mailing
                             .Set(m => m.RecruitingGuid, m => processIdentifier)
                             .Set(m => m.State, m => EmailMessageState.RecruitedForSending)
                             .Execute();
-                    if (queuedItems > 0)
+                    while (queuedItems > 0)
                     {
                         var items = Database.Query<EmailMessageDN>().Where(m =>
                             m.RecruitingGuid == processIdentifier &&
@@ -136,7 +137,9 @@ namespace Signum.Engine.Mailing
                             }
                             queuedItems--;
                         }
-                        queuedItems = 0;
+                        queuedItems = Database.Query<EmailMessageDN>().Where(m =>
+                            m.RecruitingGuid == processIdentifier &&
+                            m.State == EmailMessageState.RecruitedForSending).Count();
                     }
                 }
             }
@@ -170,8 +173,9 @@ namespace Signum.Engine.Mailing
             using (HeavyProfiler.Log("EmailAsyncSender", () => "Sopping process"))
             {
                 timer.Dispose();
-
                 CancelProcess.Cancel();
+                nextPlannedExecution = null;
+                running = false;
             }
         }
     }

@@ -3,7 +3,7 @@ define(["require", "exports"], function(require, exports) {
     function initDashboard(url) {
         var refreshCallback = function () {
             $.get(url, function (data) {
-                $("div.emailAsyncMainDiv").replaceWith(data);
+                $("div#emailAsyncMainDiv").replaceWith(data);
             });
         };
 

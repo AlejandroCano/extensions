@@ -1,11 +1,12 @@
 ﻿@using Signum.Entities.Mailing
 @using Signum.Engine.Mailing
+@using Signum.Web.Mailing
 @model EmailAsyncProcessState
 <div id="emailAsyncMainDiv">
     <h2>Email Async Sender state</h2>
     <div>
-        <a href="@Url.Action((AsyncEmailSenderController pc) => pc.Stop())" class="sf-button btn btn-default active" style="@(Model.Running ? "" : "display:none");color:red" id="sfEmailAsyncProcessDisable">Stop </a>
-        <a href="@Url.Action((AsyncEmailSenderController pc) => pc.Start())" class="sf-button btn btn-default"  style="@(!Model.Running ? "" : "display:none")" id="sfEmailAsyncProcessEnable">Start </a>
+        <a href="@(Url.Action<AsyncEmailSenderController>(pc => pc.Stop()))" class="sf-button btn btn-default active" style="@(Model.Running ? "" : "display:none");color:red" id="sfEmailAsyncProcessDisable">Stop </a>
+        <a href="@(Url.Action<AsyncEmailSenderController>(pc => pc.Start()))" class="sf-button btn btn-default"  style="@(!Model.Running ? "" : "display:none")" id="sfEmailAsyncProcessEnable">Start </a>
     </div>
 
     <div>
@@ -15,7 +16,7 @@
             {
                 <span style="color: green">RUNNING</span>
             }
-            @else
+            else
             {
                 <span style="color: red">STOPPED</span>
             }</strong>
@@ -36,7 +37,7 @@
     </div>
     <script>
         $(function () {
-            @(ProcessClient.Module["initDashboard"](Url.Action((ProcessController p) => p.View())))
+            @(MailingClient.AsyncEmailSenderModule["initDashboard"](Url.Action<AsyncEmailSenderController>(p => p.View())))
         });
     </script>
 </div>

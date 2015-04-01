@@ -38,6 +38,7 @@ namespace Signum.Web.Mailing
     {
         public static string ViewPrefix = "~/Mailing/Views/{0}.cshtml";
         public static JsModule Module = new JsModule("Extensions/Signum.Web.Extensions/Mailing/Scripts/Mailing");
+        public static JsModule AsyncEmailSenderModule = new JsModule("Extensions/Signum.Web.Extensions/Mailing/Scripts/AsyncEmailSender");
 
         private static QueryTokenDN ParseQueryToken(string tokenString, string queryRuntimeInfoInput)
         {

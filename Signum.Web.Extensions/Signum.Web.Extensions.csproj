@@ -1170,6 +1170,9 @@
       <DependentUpon>Mailing.ts</DependentUpon>
     </EmbeddedResource>
     <TypeScriptCompile Include="Mailing\Scripts\AsyncEmailSender.ts" />
+    <EmbeddedResource Include="Mailing\Scripts\AsyncEmailSender.js">
+      <DependentUpon>AsyncEmailSender.ts</DependentUpon>
+    </EmbeddedResource>
     <Content Include="Mailing\Views\_ViewStart.cshtml">
       <Generator>RazorGenerator</Generator>
       <LastGenOutput>_ViewStart.generated.cs</LastGenOutput>
