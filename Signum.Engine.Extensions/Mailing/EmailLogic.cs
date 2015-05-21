@@ -241,7 +241,7 @@ namespace Signum.Engine.Mailing
                 {
                     AllowsNew = true,
                     Lite = false,
-                    FromStates = { EmailMessageState.Created, EmailMessageState.RecruitedForSending },
+                    FromStates = { EmailMessageState.Created, EmailMessageState.Outdated },
                     ToState = EmailMessageState.Draft,
                     Execute = (m, _) => { m.State = EmailMessageState.Draft; }
                 }.Register();
@@ -250,7 +250,7 @@ namespace Signum.Engine.Mailing
                 {
                     AllowsNew = true,
                     Lite = false,
-                    FromStates = { EmailMessageState.Created, EmailMessageState.Draft, EmailMessageState.SentException, EmailMessageState.RecruitedForSending },
+                    FromStates = { EmailMessageState.Created, EmailMessageState.Draft, EmailMessageState.SentException, EmailMessageState.RecruitedForSending, EmailMessageState.Outdated },
                     ToState = EmailMessageState.ReadyToSend,
                     Execute = (m, _) => 
                     {
@@ -262,10 +262,11 @@ namespace Signum.Engine.Mailing
                 new Execute(EmailMessageOperation.Send)
                 {
                     CanExecute = m => m.State == EmailMessageState.Created || m.State == EmailMessageState.Draft ||
-                         m.State == EmailMessageState.ReadyToSend || m.State == EmailMessageState.RecruitedForSending ? null : EmailMessageMessage.TheEmailMessageCannotBeSentFromState0.NiceToString().Formato(m.State.NiceToString()),
+                         m.State == EmailMessageState.ReadyToSend || m.State == EmailMessageState.RecruitedForSending || 
+                         m.State == EmailMessageState.Outdated ? null : EmailMessageMessage.TheEmailMessageCannotBeSentFromState0.NiceToString().Formato(m.State.NiceToString()),
                     AllowsNew = true,
                     Lite = false,
-                    FromStates = { EmailMessageState.Created, EmailMessageState.Draft, EmailMessageState.ReadyToSend, EmailMessageState.RecruitedForSending },
+                    FromStates = { EmailMessageState.Created, EmailMessageState.Draft, EmailMessageState.ReadyToSend, EmailMessageState.Outdated },
                     ToState = EmailMessageState.Sent,
                     Execute = (m, _) => EmailLogic.SenderManager.Send(m)
                 }.Register();

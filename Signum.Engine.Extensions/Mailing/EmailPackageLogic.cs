@@ -13,6 +13,7 @@ using Signum.Entities;
 using System.Linq.Expressions;
 using Signum.Utilities;
 using Signum.Engine.Scheduler;
+using Signum.Engine.Authorization;
 
 namespace Signum.Engine.Mailing
 {
@@ -106,39 +107,42 @@ namespace Signum.Engine.Mailing
                                                 .Select(e => e.ToLite())
                                                 .ToList();
             int counter = 0;
-            foreach (var group in emails.GroupsOf(EmailLogic.Configuration.ChunkSizeToProcessEmails))
+            using (AuthLogic.Disable())
             {
-                var retrieved = group.RetrieveFromListOfLite();
-                foreach (var m in retrieved)
+
+                foreach (var group in emails.GroupsOf(EmailLogic.Configuration.ChunkSizeToProcessEmails))
                 {
-                    executingProcess.CancellationToken.ThrowIfCancellationRequested();
-                    counter++;
-                    try
+                    var retrieved = group.RetrieveFromListOfLite();
+                    foreach (var m in retrieved)
                     {
-                        using (Transaction tr = Transaction.ForceNew())
-                        {
-                            m.Execute(EmailMessageOperation.Send);
-                            tr.Commit();
-                        }
-                        executingProcess.ProgressChanged(counter, emails.Count);
-                    }
-                    catch
-                    {
+                        executingProcess.CancellationToken.ThrowIfCancellationRequested();
+                        counter++;
                         try
                         {
-                            if (m.SendRetries < EmailLogic.Configuration.MaxEmailSendRetries)
+                            using (Transaction tr = Transaction.ForceNew())
                             {
-                                using (Transaction tr = Transaction.ForceNew())
-                                {
-                                    var nm = m.ToLite().Retrieve();
-                                    nm.SendRetries += 1;
-                                    nm.Execute(EmailMessageOperation.ReadyToSend);
-                                    tr.Commit();
-                                }
+                                EmailLogic.SenderManager.Send(m);
+                                tr.Commit();
                             }
+                            executingProcess.ProgressChanged(counter, emails.Count);
                         }
                         catch
                         {
+                            try
+                            {
+                                if (m.SendRetries < EmailLogic.Configuration.MaxEmailSendRetries)
+                                {
+                                    using (Transaction tr = Transaction.ForceNew())
+                                    {
+                                        var nm = m.ToLite().Retrieve();
+                                        nm.SendRetries += 1;
+                                        nm.State = EmailMessageState.ReadyToSend;
+                                        nm.Save();
+                                        tr.Commit();
+                                    }
+                                }
+                            }
+                            catch { }
                         }
                     }
                 }

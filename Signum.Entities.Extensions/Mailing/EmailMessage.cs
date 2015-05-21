@@ -166,11 +166,11 @@ namespace Signum.Entities.Mailing
             set { Set(ref package, value); }
         }
 
-        Guid? recruitingGuid;
-        public Guid? RecruitingGuid
+        Guid? processIdentifier;
+        public Guid? ProcessIdentifier
         {
-            get { return recruitingGuid; }
-            set { Set(ref recruitingGuid, value); }
+            get { return processIdentifier; }
+            set { Set(ref processIdentifier, value); }
         }
 
         int sendRetries;
@@ -484,7 +484,8 @@ namespace Signum.Entities.Mailing
         Sent,
         SentException,
         ReceptionNotified,
-        Received
+        Received,
+        Outdated
     }
 
     public interface IEmailOwnerDN : IEntity

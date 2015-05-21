@@ -49,8 +49,8 @@ namespace Signum.Entities.Mailing
             set { Set(ref overrideEmailAddress, value); }
         }
 
-        double creationDateHoursLimitToSendEmails;
-        public double CreationDateHoursLimitToSendEmails
+        double? creationDateHoursLimitToSendEmails;
+        public double? CreationDateHoursLimitToSendEmails
         {
             get { return creationDateHoursLimitToSendEmails; }
             set { Set(ref creationDateHoursLimitToSendEmails, value); }

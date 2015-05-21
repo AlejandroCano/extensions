@@ -38,7 +38,7 @@ namespace Signum.Web.Mailing
         {
             AsyncEmailSenderPermission.ViewAsyncEmailSenderPanel.AssertAuthorized();
 
-            EmailAsyncSenderLogic.StartRunningProcess(0);
+            EmailAsyncSenderLogic.StartRunningEmailSenderAsync(0);
 
             Thread.Sleep(1000);
 
