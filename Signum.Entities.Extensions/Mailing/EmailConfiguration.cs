@@ -70,7 +70,7 @@ namespace Signum.Entities.Mailing
             set { Set(ref maxEmailSendRetries, value); }
         }
 
-        int asyncSenderPeriodMilliseconds = 60 * 1000;
+        int asyncSenderPeriodMilliseconds = (60 * 1000) * 60 * 5; //5 minutes
         public int AsyncSenderPeriodMilliseconds
         {
             get { return asyncSenderPeriodMilliseconds; }
