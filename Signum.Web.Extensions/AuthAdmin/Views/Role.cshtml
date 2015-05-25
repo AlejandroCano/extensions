@@ -1,8 +1,16 @@
 ﻿@using Signum.Entities.Basics
 @using Signum.Engine.Authorization
+@using Signum.Entities.Authorization
 @using (var e = Html.TypeContext<RoleDN>())
 {
     @Html.ValueLine(e, f => f.Name)
-    @Html.ValueLine(e, f => f.MergeStrategy, vl=>vl.UnitText = e.Value.StrategyHint)
+    @Html.ValueLine(e, f => f.MergeStrategy, vl => vl.UnitText = e.Value.StrategyHint)
     @Html.EntityList(e, f => f.Roles)
+
+    <fieldset>
+        <legend>Roles referidos</legend>
+        @Html.SearchControl(new FindOptions(RoleQuery.RolesReferedBy, "Refered", e.Value.ToLite()),
+                        new Context(null, "cc"))
+    </fieldset>
+
 } 

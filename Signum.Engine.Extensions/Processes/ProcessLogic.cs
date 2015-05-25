@@ -193,11 +193,14 @@ namespace Signum.Engine.Processes
 
         private static void Remove(ProcessState processState, DeleteLogParametersDN parameters)
         {
-            var query = Database.Query<ProcessDN>().Where(p => p.State == ProcessState.Canceled && p.CreationDate < parameters.DateLimit);
+            var query = Database.Query<ProcessDN>().Where(p => p.State == processState && p.CreationDate < parameters.DateLimit);
+            var idMax = query.Max(el => el.Id);
 
-            query.SelectMany(a => a.ExceptionLines()).UnsafeDeleteChunks(parameters.ChunkSize, parameters.MaxChunks);
 
-            query.UnsafeDeleteChunks(parameters.ChunkSize, parameters.MaxChunks);
+
+            query.Where(el => el.Id <= idMax).SelectMany(a => a.ExceptionLines()).UnsafeDeleteChunks(idMax,parameters.ChunkSize, parameters.MaxChunks);
+
+            query.Where(el => el.Id <= idMax).UnsafeDeleteChunks(idMax, parameters.ChunkSize, parameters.MaxChunks);
         }
 
         public static IDisposable OnApplySession(ProcessDN process)

@@ -43,7 +43,16 @@ namespace Signum.Engine.Authorization
 
         public static void ExceptionLogic_DeleteLogs(DeleteLogParametersDN parameters)
         {
-            Database.Query<SessionLogDN>().Where(a => a.SessionStart < parameters.DateLimit).UnsafeDeleteChunks(parameters.ChunkSize, parameters.MaxChunks);
+            int idMax;
+
+            using (var tr = Transaction.ForceNew())
+            {
+                idMax = Database.Query<SessionLogDN>().Where(a => a.SessionEnd < parameters.DateLimit).Max(el => el.Id);
+                tr.Commit();
+            }
+
+            Database.Query<SessionLogDN>().Where(a => a.SessionEnd < parameters.DateLimit)
+                .Where(el => el.Id < idMax).UnsafeDeleteChunks(idMax, parameters.ChunkSize, parameters.MaxChunks);
         }
 
         static bool RoleTracked(Lite<RoleDN> role)
