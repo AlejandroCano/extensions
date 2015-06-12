@@ -105,7 +105,7 @@ namespace Signum.Engine.Processes
                     ProcessLogic.Register(PackageOperationProcess.PackageOperation, new PackageOperationAlgorithm());
                 }
 
-                ExceptionLogic.DeleteLogs += ExceptionLogic_DeleteLogs;
+                //ExceptionLogic.DeleteLogs += ExceptionLogic_DeleteLogs;
             }
         }
 
