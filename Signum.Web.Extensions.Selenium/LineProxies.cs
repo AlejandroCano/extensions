@@ -303,9 +303,10 @@ namespace Signum.Web.Selenium
 
                 var listLocator = By.CssSelector("ul.typeahead.dropdown-menu");
 
-                Selenium.WaitElementVisible(listLocator);
+                //Selenium.WaitElementVisible(listLocator);
                 By itemLocator = listLocator.CombineCss(" span[data-type='{0}'][data-id='{1}']".FormatWith(TypeLogic.GetCleanName(lite.EntityType), lite.Id));
 
+                Selenium.WaitElementVisible(itemLocator);
                 Selenium.FindElement(itemLocator).Click();
 
             }, "autocomplete selection");
