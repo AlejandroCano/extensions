@@ -106,7 +106,7 @@ namespace Signum.Web.Selenium
             if (Selenium.IsElementVisible(By.CssSelector(".sf-login")))
                 return null;
 
-            if (!Selenium.IsElementPresent(By.CssSelector("a.sf-user")))
+            if (!Selenium.IsElementPresent(By.CssSelector("a.sf-logout")))
                 throw new InvalidOperationException("No login or logout button found");
 
             var result = (string)Selenium.ExecuteScript("return $('.sf-user span').text()");
@@ -126,7 +126,7 @@ namespace Signum.Web.Selenium
         public virtual void Login(string username, string password)
         {
             Selenium.Url = Url("Auth/Login");
-            Selenium.WaitElementPresent(By.Id("login"));
+            Selenium.WaitElementPresent(By.ClassName("login-section"));
 
             var currentUser = GetCurrentUser();
             if (currentUser == username)
@@ -137,7 +137,7 @@ namespace Signum.Web.Selenium
 
             Selenium.FindElement(By.Id("username")).SafeSendKeys(username);
             Selenium.FindElement(By.Id("password")).SafeSendKeys(password);
-            Selenium.FindElement(By.Id("login")).Submit();
+            Selenium.FindElement(By.ClassName("login")).Submit();
 
             Selenium.Wait(() => GetCurrentUser() != null);
         }
