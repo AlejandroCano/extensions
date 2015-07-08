@@ -103,7 +103,7 @@ namespace Signum.Web.Selenium
 
         public virtual string GetCurrentUser()
         {
-            if (Selenium.IsElementVisible(By.CssSelector(".sf-login")))
+            if (Selenium.IsElementVisible(By.ClassName("sf-login")))
                 return null;
 
             if (!Selenium.IsElementPresent(By.CssSelector("a.sf-logout")))
@@ -120,7 +120,14 @@ namespace Signum.Web.Selenium
             Selenium.Wait(() => GetCurrentUser() == null);
 
             Selenium.Url = Url("Auth/Login");
-            Selenium.WaitElementVisible(By.CssSelector(".sf-login"));
+            Selenium.WaitElementVisible(By.ClassName("sf-login"));
+        }
+
+        public virtual void LogoutClient()
+        {
+            Selenium.FindElement(By.CssSelector("a[href$='/CallCenter/EndClientSession']")).ButtonClick();
+
+            Selenium.WaitElementVisible(By.ClassName("tl-serve-client"));
         }
 
         public virtual void Login(string username, string password)
