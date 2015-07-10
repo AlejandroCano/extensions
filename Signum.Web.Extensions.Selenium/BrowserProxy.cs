@@ -132,8 +132,9 @@ namespace Signum.Web.Selenium
 
         public virtual void Login(string username, string password)
         {
-            Selenium.Url = Url("Auth/Login");
-            Selenium.WaitElementPresent(By.ClassName("login-section"));
+
+            if (!Selenium.IsElementPresent(By.ClassName("login-section"))) 
+                   Selenium.Url = Url("Auth/Login");
 
             var currentUser = GetCurrentUser();
             if (currentUser == username)
