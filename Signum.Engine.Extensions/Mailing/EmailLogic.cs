@@ -358,6 +358,7 @@ namespace Signum.Engine.Mailing
             {
                 if (!EmailLogic.Configuration.SendEmails)
                 {
+                    email.Body = "***Not sent really because Configuration is set to Do Not Send***  " + email.Body;
                     email.State = EmailMessageState.Sent;
                     email.Sent = TimeZoneManager.Now;
                     email.Save();
