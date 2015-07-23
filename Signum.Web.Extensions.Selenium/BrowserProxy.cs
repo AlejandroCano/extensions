@@ -119,10 +119,13 @@ namespace Signum.Web.Selenium
             if (Selenium.TryFindElement(By.CssSelector("a[href$='Auth/Logout']")) != null)
             {
                 Selenium.FindElement(By.CssSelector("a[href$='Auth/Logout']")).ButtonClick();
-                Selenium.WaitElementVisible(By.Id("startSession"));
+                Selenium.Wait(() =>Selenium.IsElementVisible(By.Id("startSession")) ||
+                                   Selenium.IsElementVisible(By.ClassName("sf-login")) || 
+                                   Selenium.IsElementVisible(By.ClassName("login-section")));
             }
-            //Selenium.Url = Url("Auth/Login");
-            //Selenium.WaitElementVisible(By.ClassName("sf-login"));
+
+            Selenium.Url = Url("Auth/Login");
+            Selenium.WaitElementVisible(By.ClassName("sf-login"));
         }
 
         public virtual void LogoutClient()
