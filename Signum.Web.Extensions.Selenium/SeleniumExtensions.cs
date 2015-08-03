@@ -41,7 +41,7 @@ namespace Signum.Web.Selenium
                 };
 
                 wait.IgnoreExceptionTypes(typeof(NoSuchElementException), typeof(NoAlertPresentException));
-                
+
                 return wait.Until(_ => condition());
             }
             catch (WebDriverTimeoutException ex)
@@ -168,7 +168,7 @@ namespace Signum.Web.Selenium
         public static void ConsumeAlert(this RemoteWebDriver selenium)
         {
             var alert = selenium.Wait(() => selenium.SwitchTo().Alert());
-            
+
             alert.Accept();
         }
 
@@ -246,11 +246,15 @@ namespace Signum.Web.Selenium
 
         public static void SafeSendKeys(this IWebElement element, string text)
         {
-            while(element.GetAttribute("value").Length > 0)
+            while (element.GetAttribute("value").Length > 0)
                 element.SendKeys(Keys.Backspace);
-            element.SendKeys(text);
-            Thread.Sleep(0);
-            element.GetDriver().Wait(() => element.GetAttribute("value") == text);
+
+            if (!text.IsNullOrEmpty())
+            {
+                element.SendKeys(text);
+                Thread.Sleep(0);
+                element.GetDriver().Wait(() => element.GetAttribute("value") == text);
+            }
         }
 
         public static void ButtonClick(this IWebElement button)
@@ -282,7 +286,7 @@ namespace Signum.Web.Selenium
         {
             IJavaScriptExecutor js = (IJavaScriptExecutor)driver;
             js.ExecuteScript("arguments[0].scrollIntoView(true);", element);
-            Thread.Sleep(500); 
+            Thread.Sleep(500);
         }
 
 
