@@ -48,7 +48,7 @@ namespace Signum.Web.Selenium
         public void DataTab()
         {
             Selenium.FindElement(DataTabLocator).Click();
-            Selenium.WaitElementVisible(Results.ResultTableLocator);
+           Selenium.Wait(()=>Selenium.IsElementVisible(Results.ResultTableLocator));
         }
 
         public By ChartTabLocator
@@ -59,7 +59,7 @@ namespace Signum.Web.Selenium
         public void ChartTab()
         {
             Selenium.FindElement(ChartTabLocator).Click();
-            Selenium.WaitElementVisible(ChartContianerLocator);
+              Selenium.Wait(()=>Selenium.IsElementVisible(ChartContianerLocator));
         }
 
         public By ChartContianerLocator

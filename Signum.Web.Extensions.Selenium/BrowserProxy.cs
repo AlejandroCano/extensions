@@ -125,14 +125,14 @@ namespace Signum.Web.Selenium
             }
 
             Selenium.Url = Url("Auth/Login");
-            Selenium.WaitElementVisible(By.ClassName("sf-login"));
+            Selenium.Wait(()=>Selenium.IsElementVisible(By.ClassName("sf-login")));
         }
 
         public virtual void LogoutClient()
         {
             Selenium.FindElement(By.CssSelector("a[href$='/CallCenter/EndClientSession']")).ButtonClick();
 
-            Selenium.WaitElementVisible(By.ClassName("tl-serve-client"));
+             Selenium.Wait(()=>Selenium.IsElementVisible(By.ClassName("tl-serve-client")));
         }
 
         public virtual void Login(string username, string password)
