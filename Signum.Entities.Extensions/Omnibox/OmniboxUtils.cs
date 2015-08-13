@@ -9,6 +9,15 @@ namespace Signum.Entities.Omnibox
 {
     public static class OmniboxUtils
     {
+
+        public static int SecureIndex(this string Text, int index)
+        {
+            var length = Text.Length;
+            if (index > length)
+                return length;
+            return index;
+        }
+
         public static bool IsPascalCasePattern(string ident)
         {
             if (string.IsNullOrEmpty(ident))
@@ -150,7 +159,8 @@ namespace Signum.Entities.Omnibox
             {
                 if (BoldIndices[i] != lastIsBool)
                 {
-                    yield return Tuple.Create(Text.Substring(lastIndex, i - lastIndex), lastIsBool);
+
+                    yield return Tuple.Create(Text.Substring(Text.SecureIndex(lastIndex), Text.SecureIndex( i - lastIndex)), lastIsBool);
 
                     lastIsBool = BoldIndices[i];
                     lastIndex = i;
@@ -159,6 +169,10 @@ namespace Signum.Entities.Omnibox
 
             yield return Tuple.Create(Text.Substring(lastIndex, Text.Length - lastIndex), lastIsBool);
         }
+
+
+     
+
     }
 
 
