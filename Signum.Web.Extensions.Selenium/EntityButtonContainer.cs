@@ -73,6 +73,9 @@ namespace Signum.Web.Selenium
         {
             var button = container.Selenium.FindElement(container.ButtonLocator(idButton));
 
+            if (!button.Displayed)
+                container.Selenium.ScrollTo(button);
+
             button.ButtonClick();
         }
 

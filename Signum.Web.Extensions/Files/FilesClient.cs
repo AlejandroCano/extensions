@@ -214,7 +214,7 @@ namespace Signum.Web.Files
                
                 QuerySettings.FormatRules.Add(new FormatterRule("WebImage",
                        col => col.Type == typeof(WebImage),
-                       col => new CellFormatter((help, obj) => ((WebImage)obj).FullWebPath == null ? null :
+                       col => new CellFormatter((help, obj) => ((WebImage)obj).FullWebPath.IsNullOrEmpty()  ? null :
                            new HtmlTag("img")
                            .Attr("src", RouteHelper.New().Content(((WebImage)obj).FullWebPath))
                            .Attr("alt", typeof(WebImage).NiceName())
@@ -223,7 +223,7 @@ namespace Signum.Web.Files
 
                 QuerySettings.FormatRules.Add(new FormatterRule("WebDownload",
                        col => col.Type == typeof(WebDownload),
-                       col => new CellFormatter((help, obj) => ((WebDownload)obj).FullWebPath == null ? null :
+                       col => new CellFormatter((help, obj) => ((WebDownload)obj).FullWebPath.IsNullOrEmpty() ? null :
                           new MvcHtmlString("<a href='{0}'>{1}</a>".FormatWith(RouteHelper.New().Content(((WebDownload)obj).FullWebPath), typeof(WebDownload).NiceName()))) { TextAlign = "center" }
                 ));
 

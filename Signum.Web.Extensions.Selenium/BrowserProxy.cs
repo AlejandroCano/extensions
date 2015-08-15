@@ -114,17 +114,30 @@ namespace Signum.Web.Selenium
 
         public virtual void Logout()
         {
-            Selenium.FindElement(By.CssSelector("a[href$='Auth/Logout']")).ButtonClick();
-            Selenium.Wait(() => GetCurrentUser() == null);
+            if (Selenium.TryFindElement(By.CssSelector("a[href$='Auth/Logout']")) != null)
+            {
+                Selenium.FindElement(By.CssSelector("a[href$='Auth/Logout']")).ButtonClick();
+                Selenium.Wait(() =>Selenium.IsElementVisible(By.Id("startSession")) ||
+                                   Selenium.IsElementVisible(By.ClassName("sf-login")) || 
+                                   Selenium.IsElementVisible(By.ClassName("login-section")));
+            }
 
             Selenium.Url = Url("Auth/Login");
-            Selenium.WaitElementVisible(By.CssSelector(".sf-login"));
+            Selenium.Wait(()=>Selenium.IsElementVisible(By.ClassName("sf-login")));
+        }
+
+        public virtual void LogoutClient()
+        {
+            Selenium.FindElement(By.CssSelector("a[href$='/CallCenter/EndClientSession']")).ButtonClick();
+
+             Selenium.Wait(()=>Selenium.IsElementVisible(By.ClassName("tl-serve-client")));
         }
 
         public virtual void Login(string username, string password)
         {
-            Selenium.Url = Url("Auth/Login");
-            Selenium.WaitElementPresent(By.Id("login"));
+
+            if (!Selenium.IsElementPresent(By.ClassName("login-section"))) 
+                   Selenium.Url = Url("Auth/Login");
 
             var currentUser = GetCurrentUser();
             if (currentUser == username)
@@ -135,7 +148,7 @@ namespace Signum.Web.Selenium
 
             Selenium.FindElement(By.Id("username")).SafeSendKeys(username);
             Selenium.FindElement(By.Id("password")).SafeSendKeys(password);
-            Selenium.FindElement(By.Id("login")).Submit();
+            Selenium.FindElement(By.ClassName("login")).Submit();
 
             Selenium.Wait(() => GetCurrentUser() != null);
         }
