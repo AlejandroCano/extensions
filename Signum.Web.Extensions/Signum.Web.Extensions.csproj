@@ -331,6 +331,11 @@
     </Compile>
     <Compile Include="Mailing\Controllers\AsyncEmailSenderController.cs" />
     <Compile Include="Mailing\Controllers\MailingController.cs" />
+    <Compile Include="Mailing\Views\AsyncEmailSenderDashboard.generated.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>AsyncEmailSenderDashboard.cshtml</DependentUpon>
+    </Compile>
     <Compile Include="Mailing\Views\ClientCertificationFile.generated.cs">
       <DependentUpon>ClientCertificationFile.cshtml</DependentUpon>
       <AutoGen>True</AutoGen>
@@ -1060,7 +1065,10 @@
       <Generator>RazorGenerator</Generator>
       <LastGenOutput>WordTemplate.generated.cs</LastGenOutput>
     </Content>
-    <Content Include="Mailing\Views\AsyncEmailSenderDashboard.cshtml" />
+    <Content Include="Mailing\Views\AsyncEmailSenderDashboard.cshtml">
+      <Generator>RazorGenerator</Generator>
+      <LastGenOutput>AsyncEmailSenderDashboard.generated.cs</LastGenOutput>
+    </Content>
     <None Include="ViewLog\Views\ViewLogConfiguration.cshtml">
       <Generator>RazorGenerator</Generator>
       <LastGenOutput>ViewLogConfiguration.generated.cs</LastGenOutput>

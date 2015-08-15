@@ -13,6 +13,8 @@ using Signum.Entities.Mailing;
 using Signum.Engine.Authorization;
 using Signum.Engine.Cache;
 using System.Data.SqlClient;
+using Signum.Engine.Isolation;
+using Signum.Entities.Isolation;
 
 namespace Signum.Engine.Mailing
 {
@@ -26,15 +28,17 @@ namespace Signum.Engine.Mailing
         static Guid processIdentifier;
         static AutoResetEvent autoResetEvent = new AutoResetEvent(false);
 
+        public static Func<EmailConfigurationEntity> GetConfiguration = () => EmailLogic.Configuration;
+
         public static EmailAsyncProcessState ExecutionState()
         {
             return new EmailAsyncProcessState
             {
                 Running = running,
                 CurrentProcessIdentifier = processIdentifier,
-                DelayBetweenProcessesMilliseconds = EmailLogic.Configuration.AsyncSenderPeriodMilliseconds,
+                DelayBetweenProcessesMilliseconds = GetConfiguration().AsyncSenderPeriodMilliseconds,
                 NextPlannedExecution = nextPlannedExecution,
-                IsCancelationRequested = CancelProcess.IsCancellationRequested,
+                IsCancelationRequested = CancelProcess != null ? CancelProcess.IsCancellationRequested : false,
                 QueuedItems = queuedItems,
                 MachineName = Environment.MachineName,
                 ApplicationName = Schema.Current.ApplicationName
@@ -77,9 +81,9 @@ namespace Signum.Engine.Mailing
 
                     using (AuthLogic.Disable())
                     {
-                        if (EmailLogic.Configuration.CreationDateHoursLimitToSendEmails.HasValue)
+                        if (GetConfiguration().CreationDateHoursLimitToSendEmails.HasValue)
                         {
-                            DateTime firstDate = TimeZoneManager.Now.AddHours(-EmailLogic.Configuration.CreationDateHoursLimitToSendEmails.Value);
+                            DateTime firstDate = TimeZoneManager.Now.AddHours(-GetConfiguration().CreationDateHoursLimitToSendEmails.Value);
                             Database.Query<EmailMessageEntity>().Where(m =>
                                 m.State == EmailMessageState.ReadyToSend &&
                                 m.CreationTime < firstDate).UnsafeUpdate()
@@ -94,7 +98,7 @@ namespace Signum.Engine.Mailing
 
                         while (autoResetEvent.WaitOne())
                         {
-                            if (!EmailLogic.Configuration.SendEmails)
+                            if (!GetConfiguration().SendEmails)
                                 throw new ApplicationException("Email configuration does not allow email sending");
 
                             if (CancelProcess.IsCancellationRequested)
@@ -113,7 +117,7 @@ namespace Signum.Engine.Mailing
                                         var items = Database.Query<EmailMessageEntity>().Where(m =>
                                             m.ProcessIdentifier == processIdentifier &&
                                             m.State == EmailMessageState.RecruitedForSending)
-                                            .Take(EmailLogic.Configuration.ChunkSizeToProcessEmails).ToList();
+                                            .Take(GetConfiguration().ChunkSizeToProcessEmails).ToList();
                                         queuedItems = items.Count;
                                         foreach (var email in items)
                                         {
@@ -123,7 +127,14 @@ namespace Signum.Engine.Mailing
                                             {
                                                 using (Transaction tr = Transaction.ForceNew())
                                                 {
-                                                    EmailLogic.SenderManager.Send(email);
+                                                    if (MixinDeclarations.IsDeclared(typeof(EmailMessageEntity), typeof(IsolationMixin)) && email.Isolation() != null)
+                                                    {
+                                                        using (IsolationEntity.Override(email.Isolation()))
+                                                            EmailLogic.SenderManager.Send(email);
+                                                    }
+                                                    else 
+                                                        EmailLogic.SenderManager.Send(email);
+                                                    
                                                     tr.Commit();
                                                 }
                                             }
@@ -131,7 +142,7 @@ namespace Signum.Engine.Mailing
                                             {
                                                 try
                                                 {
-                                                    if (email.SendRetries < EmailLogic.Configuration.MaxEmailSendRetries)
+                                                    if (email.SendRetries < GetConfiguration().MaxEmailSendRetries)
                                                     {
                                                         using (Transaction tr = Transaction.ForceNew())
                                                         {
@@ -185,8 +196,8 @@ namespace Signum.Engine.Mailing
 
         private static bool RecruitQueuedItems()
         {
-            DateTime? firstDate = EmailLogic.Configuration.CreationDateHoursLimitToSendEmails == null ?
-                null : (DateTime?)TimeZoneManager.Now.AddHours(-EmailLogic.Configuration.CreationDateHoursLimitToSendEmails.Value);
+            DateTime? firstDate = GetConfiguration().CreationDateHoursLimitToSendEmails == null ?
+                null : (DateTime?)TimeZoneManager.Now.AddHours(-GetConfiguration().CreationDateHoursLimitToSendEmails.Value);
             queuedItems = Database.Query<EmailMessageEntity>().Where(m =>
                 m.State == EmailMessageState.ReadyToSend &&
                 (firstDate == null ? true : m.CreationTime >= firstDate)).UnsafeUpdate()
@@ -214,8 +225,8 @@ namespace Signum.Engine.Mailing
 
         private static void SetTimer()
         {
-            nextPlannedExecution = TimeZoneManager.Now.AddMilliseconds(EmailLogic.Configuration.AsyncSenderPeriodMilliseconds);
-            timer.Change(0, EmailLogic.Configuration.AsyncSenderPeriodMilliseconds);
+            nextPlannedExecution = TimeZoneManager.Now.AddMilliseconds(GetConfiguration().AsyncSenderPeriodMilliseconds);
+            timer.Change(GetConfiguration().AsyncSenderPeriodMilliseconds, System.Threading.Timeout.Infinite);
         }
 
         public static void Stop()

@@ -224,7 +224,7 @@ namespace Signum.Web.Selenium
         {
             Selenium.FindElement(ToggleFiltersLocator).Click();
             if (show)
-                Selenium.WaitElementVisible(FiltersPanelLocator);
+                 Selenium.Wait(()=>Selenium.IsElementVisible(FiltersPanelLocator));
             else
                 Selenium.WaitElementNotVisible(FiltersPanelLocator);
         }
@@ -747,7 +747,7 @@ namespace Signum.Web.Selenium
 
         public void WaitActiveSuccess()
         {
-            Selenium.WaitElementVisible(RowsLocator.CombineCss(".active.sf-entity-ctxmenu-success"));
+            Selenium.Wait(()=>Selenium.IsElementVisible(RowsLocator.CombineCss(".active.sf-entity-ctxmenu-success")));
         }
     }
 

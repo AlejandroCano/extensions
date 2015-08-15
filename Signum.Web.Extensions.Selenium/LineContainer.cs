@@ -251,6 +251,7 @@ namespace Signum.Web.Selenium
         public static void SelectTab(this ILineContainer lineContainer, string tabId)
         {
             var fullTabId = lineContainer.PrefixUnderscore() + tabId;
+            lineContainer.Selenium.Wait(()=>lineContainer.Selenium.IsElementVisible(By.CssSelector("a[href='#{0}']".FormatWith(fullTabId))));
             lineContainer.Selenium.FindElement(By.CssSelector("a[href='#{0}']".FormatWith(fullTabId))).Click();
             lineContainer.Selenium.Wait(() => lineContainer.Selenium.IsElementVisible(By.Id(fullTabId)));
 

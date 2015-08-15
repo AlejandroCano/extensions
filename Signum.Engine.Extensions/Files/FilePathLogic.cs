@@ -21,14 +21,14 @@ namespace Signum.Engine.Files
 {
     public static class FilePathLogic
     {
-        static Expression<Func<FilePathEntity, WebImage>> WebImageExpression =
+        public static Expression<Func<FilePathEntity, WebImage>> WebImageExpression =
             fp => new WebImage { FullWebPath = fp.FullWebPath };
         public static WebImage WebImage(this FilePathEntity fp)
         {
             return WebImageExpression.Evaluate(fp);
         }
 
-        static Expression<Func<FilePathEntity, WebDownload>> WebDownloadExpression =
+       public static Expression<Func<FilePathEntity, WebDownload>> WebDownloadExpression =
            fp => new WebDownload { FullWebPath = fp.FullWebPath };
         public static WebDownload WebDownload(this FilePathEntity fp)
         {
