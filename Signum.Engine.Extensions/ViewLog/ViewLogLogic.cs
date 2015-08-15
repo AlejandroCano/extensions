@@ -12,7 +12,6 @@ using Signum.Utilities;
 using Signum.Engine.Basics;
 using Signum.Entities.ViewLog;
 using Signum.Entities.DynamicQuery;
-using Signum.Engine.DynamicQuery;
 
 namespace Signum.Engine.ViewLog
 {
