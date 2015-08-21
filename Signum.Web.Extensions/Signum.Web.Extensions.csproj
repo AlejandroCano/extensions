@@ -331,11 +331,6 @@
     </Compile>
     <Compile Include="Mailing\Controllers\AsyncEmailSenderController.cs" />
     <Compile Include="Mailing\Controllers\MailingController.cs" />
-    <Compile Include="Mailing\Views\AsyncEmailSenderDashboard.generated.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>AsyncEmailSenderDashboard.cshtml</DependentUpon>
-    </Compile>
     <Compile Include="Mailing\Views\ClientCertificationFile.generated.cs">
       <DependentUpon>ClientCertificationFile.cshtml</DependentUpon>
       <AutoGen>True</AutoGen>
