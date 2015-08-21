@@ -185,10 +185,9 @@ namespace Signum.Engine.Files
                         if (!sufix.HasText())
                             throw new InvalidOperationException("Sufix not set");
 
-                        fp.prefixPair = alg.GetPrefixPair(fp);
-
                         int i = 2;
                         fp.Sufix = sufix;
+                        fp.prefixPair = alg.GetPrefixPair(fp);
                         while (alg.RenameOnCollision && File.Exists(fp.FullPhysicalPath))
                         {
                             fp.Sufix = alg.RenameAlgorithm(sufix, i);
