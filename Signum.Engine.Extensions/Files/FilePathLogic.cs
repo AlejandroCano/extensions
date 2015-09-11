@@ -65,8 +65,8 @@ namespace Signum.Engine.Files
                         p.Id,
                         p.FileName,
                         p.FileType,
-                        p.FullPhysicalPath, //The whole entity is retrieved but is lightweight anyway
-                        p.FullWebPath
+                        //p.FullPhysicalPath, //The whole entity is retrieved but is lightweight anyway
+                        //p.FullWebPath
                     });
 
                 new Graph<FilePathEntity>.Execute(FilePathOperation.Save)
