@@ -44,8 +44,23 @@
             $container.width($win.width() - 2);
             $container.height($win.height() - 2);
 
+            if ($container.height() == 0) {
+                $container.height(250);
+            }
+
+            if ($container.width() == 0) {
+                $container.width(400);
+            }
+
             var width = $container.width();
             var height = $container.height();
+
+            //alert("$window is " + $win
+            //    + "\n$win.width(): " + $win.width()
+            //    + "\n$win.height(): " + $win.height()
+            //    + "\n$container is " + $container
+            //    + "\n$container.width(): " + width
+            //    + "\n$container.height(): " + height);
 
             chart = d3.select('#container')
                 .append('svg:svg').attr('width', width).attr('height', height);
