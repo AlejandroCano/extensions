@@ -38,15 +38,23 @@ namespace Signum.Engine.Scheduler
                        s.Date,
                    });
 
-
                 ExceptionLogic.DeleteLogs += ExceptionLogic_DeleteLogs;
-
             }
         }
 
         public static void ExceptionLogic_DeleteLogs(DeleteLogParametersDN parameters)
         {
-            Database.Query<ApplicationEventLogDN>().Where(a => a.Date < parameters.DateLimit).UnsafeDeleteChunks(parameters.ChunkSize, parameters.MaxChunks);
+            int idMax;
+
+            using (var tr = Transaction.ForceNew())
+            {
+                idMax = Database.Query<ApplicationEventLogDN>().Where(a => a.Date < parameters.DateLimit).Max(el => el.Id);
+                tr.Commit();
+            }
+
+
+            Database.Query<ApplicationEventLogDN>().Where(a => a.Date < parameters.DateLimit)
+                  .Where(el => el.Id < idMax).UnsafeDeleteChunks(idMax,parameters.ChunkSize, parameters.MaxChunks);
         }
 
         public static void ApplicationStart()

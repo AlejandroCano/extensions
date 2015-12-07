@@ -34,7 +34,12 @@ namespace Signum.Web.Extensions.AuthAdmin.Views
     #line default
     #line hidden
     using Signum.Entities;
+    
+    #line 3 "..\..\AuthAdmin\Views\Role.cshtml"
     using Signum.Entities.Authorization;
+    
+    #line default
+    #line hidden
     
     #line 1 "..\..\AuthAdmin\Views\Role.cshtml"
     using Signum.Entities.Basics;
@@ -55,7 +60,7 @@ namespace Signum.Web.Extensions.AuthAdmin.Views
         public override void Execute()
         {
             
-            #line 3 "..\..\AuthAdmin\Views\Role.cshtml"
+            #line 4 "..\..\AuthAdmin\Views\Role.cshtml"
  using (var e = Html.TypeContext<RoleDN>())
 {
     
@@ -63,43 +68,65 @@ namespace Signum.Web.Extensions.AuthAdmin.Views
             #line default
             #line hidden
             
-            #line 5 "..\..\AuthAdmin\Views\Role.cshtml"
+            #line 6 "..\..\AuthAdmin\Views\Role.cshtml"
 Write(Html.ValueLine(e, f => f.Name));
 
             
             #line default
             #line hidden
             
-            #line 5 "..\..\AuthAdmin\Views\Role.cshtml"
+            #line 6 "..\..\AuthAdmin\Views\Role.cshtml"
                                    
     
             
             #line default
             #line hidden
             
-            #line 6 "..\..\AuthAdmin\Views\Role.cshtml"
-Write(Html.ValueLine(e, f => f.MergeStrategy, vl=>vl.UnitText = e.Value.StrategyHint));
+            #line 7 "..\..\AuthAdmin\Views\Role.cshtml"
+Write(Html.ValueLine(e, f => f.MergeStrategy, vl => vl.UnitText = e.Value.StrategyHint));
 
             
             #line default
             #line hidden
             
-            #line 6 "..\..\AuthAdmin\Views\Role.cshtml"
-                                                                                    
+            #line 7 "..\..\AuthAdmin\Views\Role.cshtml"
+                                                                                      
     
             
             #line default
             #line hidden
             
-            #line 7 "..\..\AuthAdmin\Views\Role.cshtml"
+            #line 8 "..\..\AuthAdmin\Views\Role.cshtml"
 Write(Html.EntityList(e, f => f.Roles));
 
             
             #line default
             #line hidden
             
-            #line 7 "..\..\AuthAdmin\Views\Role.cshtml"
+            #line 8 "..\..\AuthAdmin\Views\Role.cshtml"
                                      
+
+
+            
+            #line default
+            #line hidden
+WriteLiteral("    <fieldset>\r\n        <legend>Roles referidos</legend>\r\n");
+
+WriteLiteral("        ");
+
+            
+            #line 12 "..\..\AuthAdmin\Views\Role.cshtml"
+   Write(Html.SearchControl(new FindOptions(RoleQuery.RolesReferedBy, "Refered", e.Value.ToLite()),
+                        new Context(null, "cc")));
+
+            
+            #line default
+            #line hidden
+WriteLiteral("\r\n    </fieldset>\r\n");
+
+            
+            #line 15 "..\..\AuthAdmin\Views\Role.cshtml"
+
 }
             
             #line default

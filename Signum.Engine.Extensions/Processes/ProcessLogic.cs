@@ -45,7 +45,7 @@ namespace Signum.Engine.Processes
 
         static Expression<Func<ProcessAlgorithmSymbol, ProcessDN>> LastProcessFromAlgorithmExpression =
             p => p.Processes().OrderByDescending(a => a.ExecutionStart).FirstOrDefault();
-          [ExpressionField("LastProcessFromAlgorithmExpression")]
+        [ExpressionField("LastProcessFromAlgorithmExpression")]
         public static ProcessDN LastProcess(this ProcessAlgorithmSymbol p)
         {
             return LastProcessFromAlgorithmExpression.Evaluate(p);
@@ -124,26 +124,26 @@ namespace Signum.Engine.Processes
                                  pa.Key
                              });
 
-                dqm.RegisterQuery(typeof(ProcessDN), ()=>
+                dqm.RegisterQuery(typeof(ProcessDN), () =>
                              from p in Database.Query<ProcessDN>()
-                              select new
-                              {
-                                  Entity = p,
-                                  p.Id,
-                                  Resume = p.ToString(),
-                                  Process = p.Algorithm,
-                                  State = p.State,
-                                  p.MachineName,
-                                  p.ApplicationName,
-                                  p.CreationDate,
-                                  p.PlannedDate,
-                                  p.CancelationDate,
-                                  p.QueuedDate,
-                                  p.ExecutionStart,
-                                  p.ExecutionEnd,
-                                  p.SuspendDate,
-                                  p.ExceptionDate,
-                              });
+                             select new
+                             {
+                                 Entity = p,
+                                 p.Id,
+                                 Resume = p.ToString(),
+                                 Process = p.Algorithm,
+                                 State = p.State,
+                                 p.MachineName,
+                                 p.ApplicationName,
+                                 p.CreationDate,
+                                 p.PlannedDate,
+                                 p.CancelationDate,
+                                 p.QueuedDate,
+                                 p.ExecutionStart,
+                                 p.ExecutionEnd,
+                                 p.SuspendDate,
+                                 p.ExceptionDate,
+                             });
 
                 dqm.RegisterQuery(typeof(ProcessExceptionLineDN), () =>
                              from p in Database.Query<ProcessExceptionLineDN>()
@@ -179,7 +179,7 @@ namespace Signum.Engine.Processes
                     };
                 }
 
-                ExceptionLogic.DeleteLogs += ExceptionLogic_DeleteLogs;
+                //ExceptionLogic.DeleteLogs += ExceptionLogic_DeleteLogs;
             }
         }
 
@@ -192,11 +192,29 @@ namespace Signum.Engine.Processes
 
         private static void Remove(ProcessState processState, DeleteLogParametersDN parameters)
         {
-            var query = Database.Query<ProcessDN>().Where(p => p.State == ProcessState.Canceled && p.CreationDate < parameters.DateLimit);
+            var query = Database.Query<ProcessDN>().Where(p => p.State == processState && p.CreationDate < parameters.DateLimit);
+            var idMax = query.Max(el => el.Id);
 
-            query.SelectMany(a => a.ExceptionLines()).UnsafeDeleteChunks(parameters.ChunkSize, parameters.MaxChunks);
+            var queryPossible = query.Where(el => el.Id <= idMax);
 
-            query.UnsafeDeleteChunks(parameters.ChunkSize, parameters.MaxChunks);
+            if (queryPossible.Any())
+            {
+                int minId = queryPossible.Min(el => el.Id);
+                int executedQuery = 0;
+
+                while (minId < idMax && executedQuery < parameters.MaxChunks)
+                {
+                    minId += parameters.ChunkSize;
+
+                    if (minId > idMax)
+                        minId = idMax;
+
+                    queryPossible.Where(el => el.Id < minId).SelectMany(a => a.ExceptionLines()).UnsafeDeleteChunks(idMax, parameters.ChunkSize, parameters.MaxChunks);
+                    queryPossible.Where(el => el.Id < minId).UnsafeDelete();
+
+                    executedQuery += 1;
+                }
+            }
         }
 
         public static IDisposable OnApplySession(ProcessDN process)
@@ -242,7 +260,7 @@ namespace Signum.Engine.Processes
                     {
                         p.MachineName = JustMyProcesses ? Environment.MachineName : ProcessDN.None;
                         p.ApplicationName = JustMyProcesses ? Schema.Current.ApplicationName : ProcessDN.None;
-                      
+
                         p.State = ProcessState.Planned;
                         p.PlannedDate = args.GetArg<DateTime>();
                     }
@@ -266,7 +284,7 @@ namespace Signum.Engine.Processes
                     Execute = (p, _) =>
                     {
                         p.MachineName = JustMyProcesses ? Environment.MachineName : ProcessDN.None;
-                        p.ApplicationName = JustMyProcesses ? Schema.Current.ApplicationName: ProcessDN.None;
+                        p.ApplicationName = JustMyProcesses ? Schema.Current.ApplicationName : ProcessDN.None;
 
                         p.SetAsQueued();
 
@@ -305,8 +323,8 @@ namespace Signum.Engine.Processes
                     MachineName = JustMyProcesses ? Environment.MachineName : ProcessDN.None,
                     ApplicationName = JustMyProcesses ? Schema.Current.ApplicationName : ProcessDN.None,
                 };
-                
-                if(copyMixinsFrom != null)
+
+                if (copyMixinsFrom != null)
                     process.CopyMixinsFrom(copyMixinsFrom);
 
                 return result.Save();
@@ -336,7 +354,7 @@ namespace Signum.Engine.Processes
             var remainingNotExceptionsLines = remainingLines.Where(li => li.Exception(executingProcess.CurrentExecution) == null);
 
             var totalCount = remainingNotExceptionsLines.Count();
-            int j = 0; 
+            int j = 0;
             while (true)
             {
                 List<T> lines = remainingNotExceptionsLines.Take(groupsOf).ToList();
@@ -344,7 +362,7 @@ namespace Signum.Engine.Processes
                     return;
 
                 for (int i = 0; i < lines.Count; i++)
-                {   
+                {
                     executingProcess.CancellationToken.ThrowIfCancellationRequested();
 
                     T pl = lines[i];

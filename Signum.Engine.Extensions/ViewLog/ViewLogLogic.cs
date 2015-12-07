@@ -79,7 +79,16 @@ namespace Signum.Engine.ViewLog
 
         static void ExceptionLogic_DeleteLogs(DeleteLogParametersDN parameters)
         {
-            Database.Query<ViewLogDN>().Where(view => view.StartDate < parameters.DateLimit).UnsafeDeleteChunks(parameters.ChunkSize, parameters.MaxChunks);
+             int idMax;
+
+             using (var tr = Transaction.ForceNew())
+             {
+                 idMax = Database.Query<ViewLogDN>().Where(a => a.StartDate < parameters.DateLimit).Max(el => el.Id);
+                 tr.Commit();
+             }
+
+            Database.Query<ViewLogDN>().Where(view => view.StartDate < parameters.DateLimit)
+                  .Where(el => el.Id < idMax).UnsafeDeleteChunks(idMax, parameters.ChunkSize, parameters.MaxChunks);
         }
 
         public static IDisposable LogView(Lite<IEntity> entity, string viewAction)

@@ -43,6 +43,7 @@ namespace Signum.Engine.Notes
                     {
                         Entity = n,
                         n.Id,
+                        n.NoteType,
                         n.CreatedBy,
                         n.CreationDate,
                         n.Title,

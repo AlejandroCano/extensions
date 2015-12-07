@@ -159,7 +159,8 @@ namespace Signum.Entities.Omnibox
             {
                 if (BoldIndices[i] != lastIsBool)
                 {
-                    yield return Tuple.Create(Text.Substring(Text.SecureIndex(lastIndex), Text.SecureIndex(i - lastIndex)), lastIsBool);
+
+                    yield return Tuple.Create(Text.Substring(Text.SecureIndex(lastIndex), Text.SecureIndex( i - lastIndex)), lastIsBool);
 
                     lastIsBool = BoldIndices[i];
                     lastIndex = i;
@@ -168,6 +169,10 @@ namespace Signum.Entities.Omnibox
 
             yield return Tuple.Create(Text.Substring(lastIndex, Text.Length - lastIndex), lastIsBool);
         }
+
+
+     
+
     }
 
 

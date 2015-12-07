@@ -105,7 +105,7 @@ namespace Signum.Engine.Processes
                     ProcessLogic.Register(PackageOperationProcess.PackageOperation, new PackageOperationAlgorithm());
                 }
 
-                ExceptionLogic.DeleteLogs += ExceptionLogic_DeleteLogs;
+                //ExceptionLogic.DeleteLogs += ExceptionLogic_DeleteLogs;
             }
         }
 
@@ -113,9 +113,50 @@ namespace Signum.Engine.Processes
         {
             var usedDatas = Database.Query<ProcessDN>().Select(a => a.Data);
 
-            Database.Query<PackageLineDN>().Where(line => !usedDatas.Contains(line.Package.Entity)).UnsafeDeleteChunks();
-            Database.Query<PackageOperationDN>().Where(po => !usedDatas.Contains(po)).UnsafeDeleteChunks();
-            Database.Query<PackageDN>().Where(po => !usedDatas.Contains(po)).UnsafeDeleteChunks();
+            {
+                int idMax;
+
+                using (var tr = Transaction.ForceNew())
+                {
+
+                    idMax = Database.Query<PackageLineDN>().Where(line => !usedDatas.Contains(line.Package.Entity)).Max(el => el.Id);
+
+                    tr.Commit();
+                }
+                Database.Query<PackageLineDN>().Where(line => !usedDatas.Contains(line.Package.Entity))
+                        .Where(el => el.Id < idMax).UnsafeDeleteChunks(idMax, parameters.ChunkSize, parameters.MaxChunks);
+
+            }
+
+            {
+                int idMax;
+
+                using (var tr = Transaction.ForceNew())
+                {
+
+                    idMax = Database.Query<PackageOperationDN>().Where(po => !usedDatas.Contains(po)).Max(el => el.Id);
+
+                    tr.Commit();
+                }
+
+                Database.Query<PackageOperationDN>().Where(po => !usedDatas.Contains(po))
+                      .Where(el => el.Id < idMax).UnsafeDeleteChunks(idMax, parameters.ChunkSize, parameters.MaxChunks);
+            }
+
+            {
+                int idMax;
+
+                using (var tr = Transaction.ForceNew())
+                {
+
+                    idMax = Database.Query<PackageDN>().Where(po => !usedDatas.Contains(po)).Max(el => el.Id);
+
+                    tr.Commit();
+                }
+
+                Database.Query<PackageDN>().Where(po => !usedDatas.Contains(po))
+                      .Where(el => el.Id < idMax).UnsafeDeleteChunks(idMax, parameters.ChunkSize, parameters.MaxChunks);
+            }
         }
 
         public static PackageDN CreateLines(this PackageDN package, IEnumerable<Lite<IEntity>> lites)
@@ -150,21 +191,21 @@ namespace Signum.Engine.Processes
             {
                 Package = package.ToLite(),
                 Target = e,
-            }); 
+            });
 
             return package;
         }
 
         static readonly GenericInvoker<Func<PackageDN, IEnumerable<Lite<IEntity>>, int>> giInsertPackageLines = new GenericInvoker<Func<PackageDN, IEnumerable<Lite<IEntity>>, int>>(
             (package, lites) => InsertPackageLines<Entity>(package, lites));
-        static int InsertPackageLines<T>(PackageDN package, IEnumerable<Lite<IEntity>> lites)
-            where T :Entity
+        static int InsertPackageLines<T>(PackageDN package, IEnumerable<Lite<IIdentifiable>> lites)
+            where T : IdentifiableEntity
         {
             return Database.Query<T>().Where(p => lites.Contains(p.ToLite())).UnsafeInsert(p => new PackageLineDN
             {
                 Package = package.ToLite(),
                 Target = p,
-            }); 
+            });
         }
 
         public static ProcessDN CreatePackageOperation(IEnumerable<Lite<IEntity>> entities, OperationSymbol operation, params object[] operationArgs)
@@ -256,7 +297,7 @@ namespace Signum.Engine.Processes
             });
         }
     }
-   
+
     public class PackageExecuteAlgorithm<T> : IProcessAlgorithm where T : class, IEntity
     {
         public ExecuteSymbol<T> Symbol { get; private set; }
