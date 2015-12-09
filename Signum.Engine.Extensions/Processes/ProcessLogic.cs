@@ -193,13 +193,13 @@ namespace Signum.Engine.Processes
         private static void Remove(ProcessState processState, DeleteLogParametersDN parameters)
         {
             var query = Database.Query<ProcessDN>().Where(p => p.State == processState && p.CreationDate < parameters.DateLimit);
-            var idMax = query.Max(el => el.Id);
+            var idMax = query.Select(el=>(int)el.Id).Max();
 
             var queryPossible = query.Where(el => el.Id <= idMax);
 
             if (queryPossible.Any())
             {
-                int minId = queryPossible.Min(el => el.Id);
+                int minId = queryPossible.Select(el=>(int)el.Id).Min();
                 int executedQuery = 0;
 
                 while (minId < idMax && executedQuery < parameters.MaxChunks)

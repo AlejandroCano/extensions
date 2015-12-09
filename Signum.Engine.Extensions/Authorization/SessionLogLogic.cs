@@ -47,7 +47,7 @@ namespace Signum.Engine.Authorization
 
             using (var tr = Transaction.ForceNew())
             {
-                idMax = Database.Query<SessionLogDN>().Where(a => a.SessionEnd < parameters.DateLimit).Max(el => el.Id);
+                idMax = Database.Query<SessionLogDN>().Where(a => a.SessionEnd < parameters.DateLimit).Max(el => (int)el.Id);
                 tr.Commit();
             }
 

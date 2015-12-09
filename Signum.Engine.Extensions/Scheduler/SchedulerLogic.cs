@@ -191,7 +191,7 @@ namespace Signum.Engine.Scheduler
               using (var tr = Transaction.ForceNew())
               {
 
-                  idMax = Database.Query<ScheduledTaskLogDN>().Where(a => a.StartTime < parameters.DateLimit).Max(el => el.Id);
+                  idMax = Database.Query<ScheduledTaskLogDN>().Where(a => a.StartTime < parameters.DateLimit).Max(el => (int)el.Id);
                   tr.Commit();
               }
 

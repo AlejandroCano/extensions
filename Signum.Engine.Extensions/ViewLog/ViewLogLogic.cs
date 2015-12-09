@@ -83,7 +83,7 @@ namespace Signum.Engine.ViewLog
 
              using (var tr = Transaction.ForceNew())
              {
-                 idMax = Database.Query<ViewLogDN>().Where(a => a.StartDate < parameters.DateLimit).Max(el => el.Id);
+                 idMax = Database.Query<ViewLogDN>().Where(a => a.StartDate < parameters.DateLimit).Max(el => (int)el.Id);
                  tr.Commit();
              }
 

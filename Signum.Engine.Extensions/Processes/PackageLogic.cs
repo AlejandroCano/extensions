@@ -119,7 +119,7 @@ namespace Signum.Engine.Processes
                 using (var tr = Transaction.ForceNew())
                 {
 
-                    idMax = Database.Query<PackageLineDN>().Where(line => !usedDatas.Contains(line.Package.Entity)).Max(el => el.Id);
+                    idMax = Database.Query<PackageLineDN>().Where(line => !usedDatas.Contains(line.Package.Entity)).Max(el => (int)el.Id);
 
                     tr.Commit();
                 }
@@ -134,7 +134,7 @@ namespace Signum.Engine.Processes
                 using (var tr = Transaction.ForceNew())
                 {
 
-                    idMax = Database.Query<PackageOperationDN>().Where(po => !usedDatas.Contains(po)).Max(el => el.Id);
+                    idMax = Database.Query<PackageOperationDN>().Where(po => !usedDatas.Contains(po)).Max(el => (int)el.Id);
 
                     tr.Commit();
                 }
@@ -149,7 +149,7 @@ namespace Signum.Engine.Processes
                 using (var tr = Transaction.ForceNew())
                 {
 
-                    idMax = Database.Query<PackageDN>().Where(po => !usedDatas.Contains(po)).Max(el => el.Id);
+                    idMax = Database.Query<PackageDN>().Where(po => !usedDatas.Contains(po)).Max(el => (int)el.Id);
 
                     tr.Commit();
                 }
@@ -198,8 +198,8 @@ namespace Signum.Engine.Processes
 
         static readonly GenericInvoker<Func<PackageDN, IEnumerable<Lite<IEntity>>, int>> giInsertPackageLines = new GenericInvoker<Func<PackageDN, IEnumerable<Lite<IEntity>>, int>>(
             (package, lites) => InsertPackageLines<Entity>(package, lites));
-        static int InsertPackageLines<T>(PackageDN package, IEnumerable<Lite<IIdentifiable>> lites)
-            where T : IdentifiableEntity
+        static int InsertPackageLines<T>(PackageDN package, IEnumerable<Lite<IEntity>> lites)
+            where T : Entity
         {
             return Database.Query<T>().Where(p => lites.Contains(p.ToLite())).UnsafeInsert(p => new PackageLineDN
             {
