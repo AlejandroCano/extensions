@@ -24,6 +24,7 @@ using Signum.Entities.Basics;
 using System.Net.Mime;
 using System.Threading;
 using Signum.Engine.Extensions.Mailing.Pop3;
+using Signum.Engine.Authorization;
 
 namespace Signum.Engine.Mailing.Pop3
 {
@@ -159,7 +160,13 @@ namespace Signum.Engine.Mailing.Pop3
                     }
                 }.Register();
 
-                SchedulerLogic.ExecuteTask.Register((Pop3ConfigurationEntity smtp) => smtp.ReceiveEmails().ToLite());
+                SchedulerLogic.ExecuteTask.Register((Pop3ConfigurationEntity smtp) =>
+                {
+                    //using (AuthLogic.UnsafeUserSession("System"))
+                    return smtp.ReceiveEmails().ToLite();
+                }
+
+                );
 
                 SimpleTaskLogic.Register(Pop3ConfigurationAction.ReceiveAllActivePop3Configurations, () =>
                 {
@@ -329,7 +336,9 @@ namespace Signum.Engine.Mailing.Pop3
             foreach (var att in email.Attachments)
                 att.File = dup.Attachments.FirstEx(a => a.Similar(att)).File;
 
-            email.From.EmailOwner = dup.From.EmailOwner;
+            if (email.From != null)
+                email.From.EmailOwner = dup.From.EmailOwner;
+
             foreach (var rec in email.Recipients.Where(a => a.Kind != EmailRecipientKind.Bcc))
                 rec.EmailOwner = dup.Recipients.FirstEx(a => a.GetHashCode() == rec.GetHashCode()).EmailOwner;
         }
@@ -340,7 +349,7 @@ namespace Signum.Engine.Mailing.Pop3
                 .SequenceEqual(email.Recipients.Where(a => a.Kind != EmailRecipientKind.Bcc).OrderBy(a => a.GetHashCode())))
                 return false;
 
-            if (!dup.From.Equals(email.From))
+            if (dup.From != null && !dup.From.Equals(email.From))
                 return false;
 
             if (dup.Attachments.Count != email.Attachments.Count || !dup.Attachments.All(a => email.Attachments.Any(a2 => a2.Similar(a))))

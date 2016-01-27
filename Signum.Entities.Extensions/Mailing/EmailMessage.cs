@@ -44,9 +44,9 @@ namespace Signum.Entities.Mailing
             set { Set(ref target, value); }
         }
 
-        [NotNullable]
+        //[NotNullable]
         EmailAddressEntity from;
-        [NotNullValidator]
+        //[NotNullValidator]
         public EmailAddressEntity From
         {
             get { return from; }
@@ -183,13 +183,13 @@ namespace Signum.Entities.Mailing
         }
 
         static StateValidator<EmailMessageEntity, EmailMessageState> validator = new StateValidator<EmailMessageEntity, EmailMessageState>(
-            m => m.State, m => m.Exception, m => m.Sent, m => m.ReceptionNotified, m => m.Package)
+            m => m.State, m => m.Exception, m => m.Sent, m => m.ReceptionNotified, m => m.Package,mbox=>mbox.From)
             {
-{EmailMessageState.Created,      false,         false,        false,                    null },
-{EmailMessageState.Sent,         false,         true,         false,                    null },
-{EmailMessageState.SentException,true,          true,         false,                    null },
-{EmailMessageState.ReceptionNotified,true,      true,         true,                     null },
-{EmailMessageState.Received,     false,         false,         false,                    false },
+{EmailMessageState.Created,      false,         false,        false,                    null,   null },
+{EmailMessageState.Sent,         false,         true,         false,                    null,   true },
+{EmailMessageState.SentException,true,          true,         false,                    null,   null },
+{EmailMessageState.ReceptionNotified,true,      true,         true,                     null,   null },
+{EmailMessageState.Received,     false,         false,         false,                   false,  null },
             };
 
         static Expression<Func<EmailMessageEntity, string>> ToStringExpression = e => e.Subject;
@@ -294,7 +294,7 @@ namespace Signum.Entities.Mailing
 
         [NotNullable, SqlDbType(Size = 300)]
         string contentId;
-        [StringLengthValidator(AllowNulls = false, Min = 3, Max = 300)]
+        [StringLengthValidator(AllowNulls = false, Min = 1, Max = 300)]
         public string ContentId
         {
             get { return contentId; }
