@@ -11,7 +11,9 @@ namespace Signum.Windows.Alerts
 {
     public static class AlertClient
     {
-        public static void Start(params Type[] types)
+        public static Func<IEnumerable<Lite<IIdentifiable>>> LoadAlertType;
+
+        public static void Start(Func<IEnumerable<Lite<IIdentifiable>>> loadAlertType = null, params Type[] types)
         {
             if (Navigator.Manager.NotDefined(MethodInfo.GetCurrentMethod()))
             {
@@ -30,6 +32,7 @@ namespace Signum.Windows.Alerts
                 });
 
                 Server.SetSemiSymbolIds<AlertTypeDN>();
+                LoadAlertType += loadAlertType;
 
                 OperationClient.AddSettings(new List<OperationSettings> 
                 {

@@ -28,6 +28,10 @@ namespace Signum.Windows.Alerts
         public Alert()
         {
             InitializeComponent();
+
+            if(AlertClient.LoadAlertType != null)
+                this.AlertType.LoadData += AlertClient.LoadAlertType;
+            
         }
     }
 }

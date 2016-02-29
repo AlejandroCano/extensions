@@ -13,7 +13,9 @@ namespace Signum.Windows.Notes
 {
     public static class NoteClient
     {
-        public static void Start(params Type[] types)
+        public static Func<IEnumerable<Lite<IIdentifiable>>> LoadNoteType;
+
+        public static void Start(Func<IEnumerable<Lite<IIdentifiable>>> loadNoteType = null, params Type[] types)
         {
             if(Navigator.Manager.NotDefined(MethodInfo.GetCurrentMethod()))
             {
@@ -29,6 +31,7 @@ namespace Signum.Windows.Notes
                 };
 
                 Server.SetSemiSymbolIds<NoteTypeDN>();
+                LoadNoteType = loadNoteType;
 
                 OperationClient.AddSettings(new List<OperationSettings>
                 {

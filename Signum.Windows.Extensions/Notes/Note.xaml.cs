@@ -29,7 +29,9 @@ namespace Signum.Windows.Notes
         public Note()
         {
             this.InitializeComponent();
-        }
 
+            if (NoteClient.LoadNoteType != null)
+                this.NoteType.LoadData += NoteClient.LoadNoteType;
+        }
     }
 }

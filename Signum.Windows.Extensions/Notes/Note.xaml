@@ -47,7 +47,7 @@
         
         <m:EntityCombo Grid.Row="1" Grid.ColumnSpan="2"
                      m:Common.Route="NoteType" FontFamily="Comic Sans MS" 
-                     FontWeight="Bold" FontSize="14" Remove="True" />
+                     FontWeight="Bold" FontSize="14" Remove="True" x:Name="NoteType"/>
         
         <m:ValueLine Grid.Row="2" Grid.ColumnSpan="2"
                      m:Common.Route="Title" FontFamily="Comic Sans MS" 
