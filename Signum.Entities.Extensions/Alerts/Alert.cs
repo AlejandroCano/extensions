@@ -83,9 +83,9 @@ namespace Signum.Entities.Alerts
         }
 
         [NotNullable]
-        AlertTypeDN alertType;
+        Lite<AlertTypeDN> alertType;
         [NotNullValidator]
-        public AlertTypeDN AlertType
+        public Lite<AlertTypeDN> AlertType
         {
             get { return alertType; }
             set { Set(ref alertType, value); }
