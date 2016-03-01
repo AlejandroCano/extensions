@@ -114,7 +114,7 @@ namespace Signum.Engine.Notes
                 Text = text,
                 Title = title,
                 Target = (Lite<IdentifiableEntity>)Lite.Create(entity.EntityType, entity.Id, entity.ToString()),
-                NoteType = noteType
+                NoteType = noteType.ToLite()
             }.Execute(NoteOperation.Save);
         }
     }
