@@ -24,6 +24,7 @@ using Signum.Entities.Basics;
 using System.Net.Mime;
 using System.Threading;
 using Signum.Engine.Extensions.Mailing.Pop3;
+using Signum.Entities.Isolation;
 
 namespace Signum.Engine.Mailing.Pop3
 {
@@ -211,11 +212,16 @@ namespace Signum.Engine.Mailing.Pop3
                     {
                         var messageInfos = client.GetMessageInfos();
 
-                        var already = messageInfos.Select(a => a.Uid).GroupsOf(50).SelectMany(l =>
-                            (from em in Database.Query<EmailMessageDN>()
-                             let ri = em.Mixin<EmailReceptionMixin>().ReceptionInfo
-                             where ri != null && l.Contains(ri.UniqueId)
-                             select KVP.Create(ri.UniqueId, (DateTime?)ri.SentDate))).ToDictionary();
+                        Dictionary<string, DateTime?> already = null;
+
+                        using (IsolationDN.Disable())
+                        {
+                            already = messageInfos.Select(a => a.Uid).GroupsOf(50).SelectMany(l =>
+                                        (from em in Database.Query<EmailMessageDN>()
+                                            let ri = em.Mixin<EmailReceptionMixin>().ReceptionInfo
+                                            where ri != null && l.Contains(ri.UniqueId)
+                                            select KVP.Create(ri.UniqueId, (DateTime?)ri.SentDate))).ToDictionary();
+                        }
 
                         using (Transaction tr = Transaction.ForceNew())
                         {
