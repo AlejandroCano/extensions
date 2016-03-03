@@ -63,7 +63,7 @@ namespace Signum.Windows.Isolation
                     Lite<IsolationDN> result;
                     if (SelectorWindow.ShowDialog(isos, out result,
                         elementIcon: getIsolationIcon,
-                        elementText: iso => getIsolationIcon(iso) == null ? iso.ToString() : null,
+                        elementText: iso => iso==null?"Ninguna":( getIsolationIcon(iso) == null  ? iso.ToString() : null),
                         title: IsolationMessage.SelectAnIsolation.NiceToString(),
                         message: IsolationMessage.SelectAnIsolation.NiceToString(),
                         owner: owner))
@@ -77,6 +77,8 @@ namespace Signum.Windows.Isolation
                 Finder.Manager.TaskSearchWindow += Manager_TaskSearchWindow;
             }
         }
+
+
 
         static Action<Window> Async_OnShowInAnotherThread()
         {
@@ -148,12 +150,15 @@ namespace Signum.Windows.Isolation
             {
                 Lite<IsolationDN> isolation = GetIsolation(ctx, IsValid.TryGetC(ctx.Type));
 
-                if (isolation == null)
-                {
-                    ctx.CancelConstruction = true;
-                    return null;
-                }
-                ctx.Args.Add(isolation);
+                //if (isolation == null)
+                //{
+                //    ctx.CancelConstruction = true;
+                //    return null;
+                //}
+                //ctx.Args.Add(isolation);
+
+                if (isolation != null)
+                    ctx.Args.Add(isolation);
 
                 return IsolationDN.Override(isolation);
             }
