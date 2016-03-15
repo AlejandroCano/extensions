@@ -15,14 +15,42 @@ namespace Signum.Entities.Chart
 {
     public static class ChartUtils
     {
+        public static string GetValuesJson(ChartRequest model, ResultTable queryResult)
+        {
+            var trans = model.Parameters.Where(p => p.Name == "Translations").Select(p => p.Value).SingleOrDefaultEx();
+            var transDict = trans.Split(',').ToDictionary(e => e.Split('=')[1], v => v.Split('=')[0]);
+
+
+            StringBuilder sb = new StringBuilder();
+            sb.Append("[");
+
+            foreach (var row in queryResult.Rows)
+            {
+                sb.Append("{");
+                foreach (var colum in queryResult.Columns)
+                {
+                    var key = transDict[colum.Column.Name.Split('.')[0]];
+                    if (key.HasText())
+                        sb.Append("'{0}':'{1}',".FormatWith(key, row[colum].ToString().Replace(",",".")));
+                }
+                sb.Append("},");
+            }
+            sb.Append("];");
+
+
+            return sb.ToString();
+
+        }
+
+
         public static bool IsChartColumnType(QueryToken token, ChartColumnType ct)
         {
             if (token == null)
                 return false;
 
-            var type =  token.GetChartColumnType();
+            var type = token.GetChartColumnType();
 
-            if(type == null)
+            if (type == null)
                 return false;
 
             return Flag(ct, type.Value);
@@ -32,13 +60,13 @@ namespace Signum.Entities.Chart
         {
             switch (QueryUtils.TryGetFilterType(token.Type))
             {
-                case FilterType.Lite:return ChartColumnType.Lite;
+                case FilterType.Lite: return ChartColumnType.Lite;
                 case FilterType.Boolean:
                 case FilterType.Enum: return ChartColumnType.Enum;
                 case FilterType.String:
                 case FilterType.Guid: return ChartColumnType.String;
                 case FilterType.Integer: return ChartColumnType.Integer;
-                case FilterType.Decimal: return token.IsRealGroupable ? ChartColumnType.RealGroupable :  ChartColumnType.Real;
+                case FilterType.Decimal: return token.IsRealGroupable ? ChartColumnType.RealGroupable : ChartColumnType.Real;
                 case FilterType.DateTime:
                     {
                         if (IsDateOnly(token))
@@ -79,8 +107,8 @@ namespace Signum.Entities.Chart
             return false;
         }
 
-        
-        
+
+
         public static bool SyncronizeColumns(this ChartScriptEntity chartScript, IChartBase chart)
         {
             bool result = false;
@@ -101,7 +129,7 @@ namespace Signum.Entities.Chart
 
                 chart.Columns[i].parentChart = chart;
                 chart.Columns[i].ScriptColumn = chartScript.Columns[i];
-             
+
                 if (!result)
                     result = chart.Columns[i].IntegrityCheck() != null;
             }
@@ -249,7 +277,7 @@ namespace Signum.Entities.Chart
                 displayName = request.Columns[i].ScriptColumn.DisplayName,
                 title = c.GetTitle(),
                 token = c.Token == null ? null : c.Token.Token.FullKey(),
-                type = c.Token == null ? null : c.Token.Token.GetChartColumnType().ToString(),               
+                type = c.Token == null ? null : c.Token.Token.GetChartColumnType().ToString(),
                 isGroupKey = c.IsGroupKey,
                 converter = c.Token == null ? null : c.Converter(index++)
             }).ToList();
@@ -268,7 +296,7 @@ namespace Signum.Entities.Chart
                 });
             }
 
-            var parameters = request.Parameters.ToDictionary(p=> p.Name, p => p.Value);
+            var parameters = request.Parameters.ToDictionary(p => p.Name, p => p.Value);
 
             return new
             {
@@ -344,7 +372,7 @@ namespace Signum.Entities.Chart
                         key = value,
                         toStr = value,
                     };
-                };;
+                }; ;
         }
 
         public static List<List<ChartScriptEntity>> PackInGroups(IEnumerable<ChartScriptEntity> scripts, int rowWidth)
@@ -356,7 +384,7 @@ namespace Signum.Entities.Chart
             var groups = scripts
                 .OrderBy(s => s.Name)
                 .GroupBy(s => s.ColumnsStructure)
-                .OrderBy(g => g.First().Columns.Count(s=>!s.IsOptional))
+                .OrderBy(g => g.First().Columns.Count(s => !s.IsOptional))
                 .ThenByDescending(g => g.Count())
                 .ThenBy(g => g.Key)
                 .ToList();
@@ -395,10 +423,10 @@ namespace Signum.Entities.Chart
             int index = chartRequest.Columns.IndexOf(chartColumn);
 
             foreach (var p in chartRequest.Parameters.Where(p => p.ScriptParameter.ColumnIndex == index))
-	        {
+            {
                 if (p.PropertyCheck(() => p.Value).HasText())
                     p.Value = p.ScriptParameter.DefaultValue(chartColumn.Token.Try(t => t.Token));
-	        }
+            }
         }
     }
 

@@ -270,13 +270,23 @@ namespace Signum.Web.Chart
                 ControllerUrl = RouteHelper.New().Action("NewSubTokensCombo", "Chart"),
             }; 
         }
+
+
+
     }
 
     public enum ChartRequestMode
     {
         complete,
         chart,
-        data
+        data,
+        GoogleMap
     }
+
+
+
+
+    
+
 
 }

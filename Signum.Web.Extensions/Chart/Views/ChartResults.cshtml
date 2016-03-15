@@ -7,29 +7,66 @@
 @using Signum.Entities.Chart
 @using Signum.Web.Chart
 @model TypeContext<ChartRequest>
-@{ 
+@{
     ResultTable queryResult = (ResultTable)ViewData[ViewDataKeys.Results];
     var mode = (ChartRequestMode)ViewData["mode"];
 }
-@if(mode == ChartRequestMode.complete)
+@if (mode == ChartRequestMode.data)
 {
-    using(var tabs = Html.Tabs(Model))
+    using (var tabs = Html.Tabs(Model))
     {
-        tabs.Tab("sfChartContainer", ChartMessage.Chart.NiceToString(), @<div class="sf-chart-container" 
-                data-json="@Html.Json(ChartUtils.DataJson(Model.Value, queryResult)).ToString()">
-            </div>);
+        tabs.Tab("sfChartContainer", ChartMessage.Chart.NiceToString(), @<div class="sf-chart-container"
+                                                                              data-json="@Html.Json(ChartUtils.DataJson(Model.Value, queryResult)).ToString()">
+    </div>);
 
         tabs.Tab("sfChartData", ChartMessage.Data.NiceToString(), @<text>
-            @{Html.RenderPartial(ChartClient.ChartResultsTableView, Model, ViewData);}
+        @{Html.RenderPartial(ChartClient.ChartResultsTableView, Model, ViewData);}
         </text>);
-    }
-}
-else if (mode == ChartRequestMode.chart)
-{
-    <div class="sf-chart-container"data-json="@Html.Json(ChartUtils.DataJson(Model.Value, queryResult)).ToString()">
-    </div>
-}
-else if (mode == ChartRequestMode.data)
-{
-    Html.RenderPartial(ChartClient.ChartResultsTableView, Model, ViewData);
-}
+                }
+            }
+            else if (mode == ChartRequestMode.chart)
+            {
+                <div class="sf-chart-container" data-json="@Html.Json(ChartUtils.DataJson(Model.Value, queryResult)).ToString()">
+                </div>
+            }
+            else if (mode == ChartRequestMode.data)
+            {
+                Html.RenderPartial(ChartClient.ChartResultsTableView, Model, ViewData);
+            }
+            else if (mode == ChartRequestMode.complete)
+            {
+                <div id="mapa" class="responsive" style="min-height:600px">
+                </div>
+
+              
+                <script type="text/javascript">
+
+
+                    function loadDependencies() {                     
+                        return $.getScript("http://maps.googleapis.com/maps/api/js?sensor=false&callback=initMap");
+                    }
+
+                    function loadDependenciesMissing() {
+                        if (typeof google === 'object' && typeof google.maps === 'object') {
+                            initMap();
+                        } else {
+                            loadDependencies();
+                        }
+                    }
+
+
+                      @Html.Raw(Model.Value.ChartScript.Script)
+                </script>
+                <script type="text/javascript">
+
+                    var coordenadas = @Html.Raw(ChartUtils.GetValuesJson(Model.Value, queryResult))
+
+                     function initMap() {
+                         LoadMap(window.document.getElementById("mapa"), coordenadas);
+                     }
+
+                    loadDependenciesMissing();
+                </script>
+
+
+            }
