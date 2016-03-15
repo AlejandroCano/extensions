@@ -68,7 +68,7 @@ namespace Signum.Web.Dashboard
                 Navigator.AddSettings(new List<EntitySettings>
                 {
                     new EntitySettings<DashboardEntity> { PartialViewName = e => AdminViewPrefix.FormatWith("DashboardAdmin") },
-                    new EmbeddedEntitySettings<PanelPartEntity>(),
+                    new EntitySettings<PanelPartEntity>(),
                     
                     new EntitySettings<UserChartPartEntity>(),
 
