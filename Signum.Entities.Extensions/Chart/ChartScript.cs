@@ -144,7 +144,7 @@ namespace Signum.Entities.Chart
             string from = Columns.Where(a => a.IsGroupKey).ToString(c => c.ColumnType.GetCode() + (c.IsOptional ? "?" : ""), ",");
             string to = Columns.Where(a => !a.IsGroupKey).ToString(c => c.ColumnType.GetCode() + (c.IsOptional ? "?" : ""), ",");
 
-            ColumnsStructure = "{0} -> {1}".FormatWith(from, to);
+            ColumnsStructure = "{0} -> {1}".FormatWith(from, to).Trim();
 
             base.PreSaving(ref graphModified);
         }
