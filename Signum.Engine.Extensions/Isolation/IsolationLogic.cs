@@ -32,6 +32,10 @@ namespace Signum.Engine.Isolation
 
     public static class IsolationLogic
     {
+
+        public static bool IsStarted;
+     
+
         public static ResetLazy<List<Lite<IsolationEntity>>> Isolations;
 
         internal static Dictionary<Type, IsolationStrategy> strategies = new Dictionary<Type, IsolationStrategy>();
@@ -40,6 +44,7 @@ namespace Signum.Engine.Isolation
         {
             if (sb.NotDefined(MethodInfo.GetCurrentMethod()))
             {
+               
                 sb.Include<IsolationEntity>();
 
                 dqm.RegisterQuery(typeof(IsolationEntity), () =>
@@ -74,6 +79,9 @@ namespace Signum.Engine.Isolation
 
                     return null;
                 };
+
+                IsStarted = true;
+
             }
         }
 
@@ -242,6 +250,7 @@ namespace Signum.Engine.Isolation
         {
             return strategies.ToDictionary();
         }
+
         
     }
 }
