@@ -13,7 +13,7 @@ using Signum.Entities.UserQueries;
 
 namespace Signum.Entities.Dashboard
 {
-    [Serializable, EntityKind(Entities.EntityKind.SharedPart, Entities.EntityData.Transactional)]
+    [Serializable]
     public class PanelPartEntity : EmbeddedEntity, IGridEntity
     {
         string title;
