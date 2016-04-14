@@ -11,9 +11,9 @@ namespace Signum.Windows.Alerts
 {
     public static class AlertClient
     {
-        public static Func<IEnumerable<Lite<IIdentifiable>>> LoadAlertType;
+        public static Func<IEnumerable<Lite<IEntity>>> LoadAlertType;
 
-        public static void Start(Func<IEnumerable<Lite<IIdentifiable>>> loadAlertType = null, params Type[] types)
+        public static void Start(Func<IEnumerable<Lite<IEntity>>> loadAlertType = null, params Type[] types)
         {
             if (Navigator.Manager.NotDefined(MethodInfo.GetCurrentMethod()))
             {

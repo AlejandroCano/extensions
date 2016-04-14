@@ -13,9 +13,9 @@ namespace Signum.Windows.Notes
 {
     public static class NoteClient
     {
-        public static Func<IEnumerable<Lite<IIdentifiable>>> LoadNoteType;
+        public static Func<IEnumerable<Lite<IEntity>>> LoadNoteType;
 
-        public static void Start(Func<IEnumerable<Lite<IIdentifiable>>> loadNoteType = null, params Type[] types)
+        public static void Start(Func<IEnumerable<Lite<IEntity>>> loadNoteType = null, params Type[] types)
         {
             if(Navigator.Manager.NotDefined(MethodInfo.GetCurrentMethod()))
             {
