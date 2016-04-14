@@ -17,6 +17,7 @@ using Signum.Entities.Basics;
 using Signum.Entities.Alerts;
 using System.Linq.Expressions;
 using Signum.Engine.Extensions.Basics;
+using Signum.Utilities.DataStructures;
 
 namespace Signum.Engine.Alerts
 {
@@ -102,7 +103,7 @@ namespace Signum.Engine.Alerts
 
         public static AlertDN CreateAlert(this IEntity entity, string text, AlertTypeDN alertType, DateTime? alertDate = null, Lite<IUserDN> user = null, string title = null)
         {
-            return CreateAlert(entity.ToLiteFat(), text, alertType, alertDate, user, title);
+            return CreateAlert(entity.ToLite(), text, alertType, alertDate, user, title);
         }
 
         public static AlertDN CreateAlert<T>(this Lite<T> entity, string text, AlertTypeDN alertType, DateTime? alertDate = null, Lite<IUserDN> user = null, string title = null) where T : class, IEntity
@@ -117,7 +118,7 @@ namespace Signum.Engine.Alerts
                 Text = text,
                 Title = title,
                 Target = (Lite<Entity>)entity,
-                AlertType = alertType
+                AlertType = alertType.ToLite()
             };
 
             return result.Execute(AlertOperation.SaveNew);

@@ -20,7 +20,7 @@
         </LinearGradientBrush>
     </UserControl.Background>
     <StackPanel m:Common.IsReadOnly="{Binding Attended}" m:Common.MinLabelWidth="105">
-        <m:EntityCombo m:Common.Route="AlertType" Create="False" m:Common.IsReadOnly="{Binding Attended}"/>
+        <m:EntityCombo m:Common.Route="AlertType" Create="False" m:Common.IsReadOnly="{Binding Attended}" x:Name="AlertType"/>
         <m:EntityLine m:Common.Route="CreatedBy" m:Common.IsReadOnly="True"/>
         <m:ValueLine m:Common.Route="CreationDate" m:Common.IsReadOnly="True"/>
         <m:EntityLine  m:Common.Route="Target" m:Common.IsReadOnly="True"/>

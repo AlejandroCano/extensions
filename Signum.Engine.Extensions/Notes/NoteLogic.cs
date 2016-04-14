@@ -29,6 +29,7 @@ namespace Signum.Engine.Notes
             return NotesExpression.Evaluate(ident);
         }
 
+     
         static HashSet<NoteTypeDN> SystemNoteTypes = new HashSet<NoteTypeDN>();
         static bool started = false;
 
@@ -88,7 +89,7 @@ namespace Signum.Engine.Notes
                     foreach (var type in registerExpressionsFor)
                         dqm.RegisterExpression(new ExtensionInfo(type, exp, exp.Body.Type, "Notes", () => typeof(NoteDN).NicePluralName()));
                 }
-
+              
                 started = true;
             }
         }
@@ -113,7 +114,7 @@ namespace Signum.Engine.Notes
                 Text = text,
                 Title = title,
                 Target = (Lite<Entity>)Lite.Create(entity.EntityType, entity.Id, entity.ToString()),
-                NoteType = noteType
+                NoteType = noteType.ToLite()
             }.Execute(NoteOperation.Save);
         }
     }

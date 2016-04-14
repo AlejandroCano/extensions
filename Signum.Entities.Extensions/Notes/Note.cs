@@ -63,8 +63,8 @@ namespace Signum.Entities.Notes
             return " - ".Combine(title, text.FirstNonEmptyLine()).Etc(100);
         }
 
-        NoteTypeDN noteType;
-        public NoteTypeDN NoteType
+        Lite<NoteTypeDN> noteType;
+        public Lite<NoteTypeDN> NoteType
         {
             get { return noteType; }
             set { Set(ref noteType, value); }
