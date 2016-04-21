@@ -269,10 +269,10 @@ namespace Signum.Web.Selenium
 
         public static void SafeClick(this IWebElement element)
         {
-            if (!element.Displayed)
-            {
-                element.GetDriver().ScrollTo(element);
-            }
+            //if (!element.Displayed || element.Location.Y < 150)//Nav
+            //{
+               element.GetDriver().ScrollTo(element);
+            //}
 
             element.Click();
         }
@@ -280,7 +280,7 @@ namespace Signum.Web.Selenium
         public static void ScrollTo(this RemoteWebDriver driver, IWebElement element)
         {
             IJavaScriptExecutor js = (IJavaScriptExecutor)driver;
-            js.ExecuteScript("arguments[0].scrollIntoView(true);", element);
+            js.ExecuteScript("arguments[0].scrollIntoView(false);", element);
             Thread.Sleep(500);
         }
 

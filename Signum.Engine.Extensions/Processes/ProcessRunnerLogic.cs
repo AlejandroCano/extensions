@@ -451,6 +451,7 @@ namespace Signum.Engine.Processes
                         CurrentExecution.ExecutionEnd = TimeZoneManager.Now;
                         CurrentExecution.State = ProcessState.Finished;
                         CurrentExecution.Progress = null;
+                        CurrentExecution.User.ClearEntity();
                         using (OperationLogic.AllowSave<ProcessEntity>())
                             CurrentExecution.Save();
                     }
