@@ -30,7 +30,7 @@ namespace Signum.Engine.Alerts
         }
 
         public static HashSet<AlertTypeEntity> SystemAlertTypes = new HashSet<AlertTypeEntity>();
-        static bool started = false;
+        public static bool started = false;
 
         public static void AssertStarted(SchemaBuilder sb)
         {
