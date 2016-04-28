@@ -219,14 +219,14 @@ namespace Signum.Windows.Extensions.Files
 
                         string[] fileNames = new string[fileGroupDescriptor.cItems];
 
-                        IntPtr fileDescriptorPointer = (IntPtr)((int)fileGroupDescriptorAPointer + Marshal.SizeOf(fileGroupDescriptor.cItems));
+                        IntPtr fileDescriptorPointer = (IntPtr)((long)fileGroupDescriptorAPointer + Marshal.SizeOf(fileGroupDescriptor.cItems));
 
-                        for (int fileDescriptorIndex = 0; fileDescriptorIndex < fileGroupDescriptor.cItems; fileDescriptorIndex++)
+                        for (long fileDescriptorIndex = 0; fileDescriptorIndex < fileGroupDescriptor.cItems; fileDescriptorIndex++)
                         {
                             NativeMethods.FILEDESCRIPTORA fileDescriptor = (NativeMethods.FILEDESCRIPTORA)Marshal.PtrToStructure(fileDescriptorPointer, typeof(NativeMethods.FILEDESCRIPTORA));
                             fileNames[fileDescriptorIndex] = fileDescriptor.cFileName;
 
-                            fileDescriptorPointer = (IntPtr)((int)fileDescriptorPointer + Marshal.SizeOf(fileDescriptor));
+                            fileDescriptorPointer = (IntPtr)((long)fileDescriptorPointer + Marshal.SizeOf(fileDescriptor));
                         }
 
                         return fileNames;
@@ -253,14 +253,14 @@ namespace Signum.Windows.Extensions.Files
 
                         string[] fileNames = new string[fileGroupDescriptor.cItems];
 
-                        IntPtr fileDescriptorPointer = (IntPtr)((int)fileGroupDescriptorWPointer + Marshal.SizeOf(fileGroupDescriptor.cItems));
+                        IntPtr fileDescriptorPointer = (IntPtr)((long)fileGroupDescriptorWPointer + Marshal.SizeOf(fileGroupDescriptor.cItems));
 
-                        for (int fileDescriptorIndex = 0; fileDescriptorIndex < fileGroupDescriptor.cItems; fileDescriptorIndex++)
+                        for (long fileDescriptorIndex = 0; fileDescriptorIndex < fileGroupDescriptor.cItems; fileDescriptorIndex++)
                         {
                             NativeMethods.FILEDESCRIPTORW fileDescriptor = (NativeMethods.FILEDESCRIPTORW)Marshal.PtrToStructure(fileDescriptorPointer, typeof(NativeMethods.FILEDESCRIPTORW));
                             fileNames[fileDescriptorIndex] = fileDescriptor.cFileName;
 
-                            fileDescriptorPointer = (IntPtr)((int)fileDescriptorPointer + Marshal.SizeOf(fileDescriptor));
+                            fileDescriptorPointer = (IntPtr)((long)fileDescriptorPointer + Marshal.SizeOf(fileDescriptor));
                         }
 
                         return fileNames;
