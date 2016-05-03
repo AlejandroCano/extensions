@@ -1,28 +1,23 @@
-﻿.status-None
-{
+﻿.status-None {
     color: red;
 }
 
-.status-Pending
-{
+.status-Pending {
     color: #ffc300;
 }
 
-.status-Completed
-{
+.status-Completed {
     color: green;
 }
 
 
-table.st
-{
+table.st {
     border-collapse: collapse;
     margin: 20px;
     text-align: left;
 }
 
-    table.st th
-    {   
+    table.st th {
         border-top: 1px solid #E8EDFF;
         background: #C9D7F1;
         color: #039;
@@ -31,53 +26,83 @@ table.st
         padding: 4px;
     }
 
-    table.st td
-    {
+    table.st td {
         background: #E8EDFF;
         border-top: 1px solid white;
         color: #669;
         padding: 4px;
     }
 
-    table.st select, table.st textarea
-    {
-        vertical-align:middle;
+    table.st select, table.st textarea {
+        vertical-align: middle;
     }
 
-    table.st thead th
-    {
+    table.st thead th {
         background: #B9C9FE;
     }
 
-    table.st .leftCell
-    {
+    table.st .leftCell {
         font-weight: bold;
-        width:1px;
-        text-align:right;
+        width: 1px;
+        text-align: right;
     }
 
-    table.st .smallCell
-    {
-        text-align:right;
-        width:1px;
+    table.st .smallCell {
+        text-align: right;
+        width: 1px;
     }
 
-    table.st .titleCell
-    {
-        font-weight:bold;
+    table.st .titleCell {
+        font-weight: bold;
     }
 
-    table.st .monospaceCell
-    {
+    table.st .monospaceCell {
         font-family: monospace;
-        font-size:14px;
+        font-size: 14px;
     }
 
-        table.st .monospaceCell pre
-        {
-            padding:0px;
+        table.st .monospaceCell pre {
+            padding: 0px;
             color: rgb(102, 102, 153);
-            background-color:transparent;
-            border:none;
-            font-size:14px;
+            background-color: transparent;
+            border: none;
+            font-size: 14px;
         }
+
+/* Dropdown Button */
+.dropbtn {
+    background-color: #4CAF50;
+    color: white;
+    padding: 16px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+}
+
+    /* Dropdown button on hover & focus */
+    .dropbtn:hover, .dropbtn:focus {
+        background-color: #3e8e41;
+    }
+
+/* The container <div> - needed to position the dropdown content */
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+/* Dropdown Content (Hidden by Default) */
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+}
+
+/* Links inside the dropdown */
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
