@@ -90,6 +90,20 @@ namespace Signum.Entities.Dashboard
             set { Set(ref guid, value); }
         }
 
+        bool forNavbar;
+        public bool ForNavbar
+        {
+            get { return forNavbar; }
+            set { Set(ref forNavbar, value); }
+        }
+
+        string key;
+        public string Key
+        {
+            get { return key; }
+            set { Set(ref key, value); }
+        }
+
         static Expression<Func<DashboardEntity, IPartEntity, bool>> ContainsContentExpression =
             (cp, content) => cp.Parts.Any(p => p.Content.Is(content));
         public bool ContainsContent(IPartEntity content)
