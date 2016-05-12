@@ -6,6 +6,8 @@ using Signum.Engine.Authorization;
 using Signum.Entities.Authorization;
 using Signum.Utilities;
 using Signum.Web.Auth;
+using Signum.Engine;
+using Signum.Entities;
 
 namespace Signum.Web.Auth
 {
@@ -31,7 +33,7 @@ namespace Signum.Web.Auth
                            System.Web.HttpContext.Current.Request.UserHostAddress,
                            ref ticketText);
 
-                    AuthController.OnUserPreLogin(null, user); 
+                    AuthController.OnUserPreLogin(null, user);
 
                     System.Web.HttpContext.Current.Response.Cookies.Add(new HttpCookie(CookieName, ticketText)
                     {
@@ -60,8 +62,21 @@ namespace Signum.Web.Auth
             var httpContext = System.Web.HttpContext.Current;
 
             var authCookie = httpContext.Request.Cookies[CookieName];
+
+            string ticketText = null;
+
             if (authCookie != null && authCookie.Value.HasText())
+            {
+                ticketText = authCookie.Value;
                 httpContext.Response.Cookies[CookieName].Expires = DateTime.UtcNow.AddDays(-10);
+            }
+
+
+            if (ticketText.HasText())
+                Database.Query<UserTicketEntity>().Where(u => u.Ticket == ticketText).UnsafeDelete();
+            else
+                Database.Query<UserTicketEntity>().Where(u => u.User.RefersTo(UserEntity.Current)).UnsafeDelete();
+
         }
 
         public static void SaveCookie()
