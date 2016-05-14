@@ -16,12 +16,13 @@ using System.Linq.Expressions;
 using Signum.Entities.Files;
 using System.Security.Cryptography;
 using Signum.Entities.Scheduler;
+using System.Reflection;
 
 namespace Signum.Entities.Mailing
 {
     [Serializable, EntityKind(EntityKind.Main, EntityData.Transactional)]
     public class EmailMessageEntity : Entity, IProcessLineDataEntity
-    {   
+    {
         public EmailMessageEntity()
         {
             this.UniqueIdentifier = Guid.NewGuid();
@@ -83,20 +84,20 @@ namespace Signum.Entities.Mailing
 
         [SqlDbType(Size = int.MaxValue)]
         string subject;
-        [StringLengthValidator(AllowNulls = true, AllowLeadingSpaces=true, AllowTrailingSpaces=true)]
+        [StringLengthValidator(AllowNulls = true, AllowLeadingSpaces = true, AllowTrailingSpaces = true)]
         public string Subject
         {
             get { return subject; }
-            set { if (Set(ref subject, value))CalculateHash(); }
+            set { if (Set(ref subject, value)) CalculateHash(); }
         }
 
         [SqlDbType(Size = int.MaxValue)]
         string body;
-        [StringLengthValidator(AllowNulls = true, MultiLine=true)]
+        [StringLengthValidator(AllowNulls = true, MultiLine = true)]
         public string Body
         {
             get { return body; }
-            set { if (Set(ref body, value))CalculateHash(); }
+            set { if (Set(ref body, value)) CalculateHash(); }
         }
 
         static readonly char[] spaceChars = new[] { '\r', '\n', ' ' };
@@ -308,7 +309,7 @@ namespace Signum.Entities.Mailing
                 ContentId = contentId,
                 File = file,
                 Type = type,
-            }; 
+            };
         }
 
         internal bool Similar(EmailAttachmentEntity a)
@@ -355,10 +356,10 @@ namespace Signum.Entities.Mailing
         {
             return new EmailRecipientEntity
             {
-                 DisplayName = DisplayName,
-                 EmailAddress = EmailAddress, 
-                 EmailOwner = EmailOwner,
-                 Kind = Kind,
+                DisplayName = DisplayName,
+                EmailAddress = EmailAddress,
+                EmailOwner = EmailOwner,
+                Kind = Kind,
             };
         }
 
@@ -389,7 +390,7 @@ namespace Signum.Entities.Mailing
     }
 
     public enum EmailRecipientKind
-    { 
+    {
         To,
         Cc,
         Bcc
@@ -422,11 +423,37 @@ namespace Signum.Entities.Mailing
 
         [NotNullable, SqlDbType(Size = 100)]
         string emailAddress;
-        [EMailValidator, StringLengthValidator(AllowNulls = false, Min = 3, Max = 100)]
+        [StringLengthValidator(AllowNulls = false, Min = 3, Max = 100)]
         public string EmailAddress
         {
             get { return emailAddress; }
-            set { Set(ref emailAddress, value); }
+            set
+            {
+                if (Set(ref emailAddress, value))
+                    if (!ValidateEmail(emailAddress))
+                        InvalidEmail = true;
+            }
+        }
+
+        bool invalidEmail;
+        public bool InvalidEmail
+        {
+            get { return invalidEmail; }
+            set { Set(ref invalidEmail, value); }
+        }
+        public static bool ValidateEmail(string email)
+        {
+            return EMailValidatorAttribute.EmailRegex.IsMatch(email);
+        }
+
+        protected override string PropertyValidation(PropertyInfo pi)
+        {
+
+            if (pi.Is(() => EmailAddress) && !InvalidEmail && !ValidateEmail(EmailAddress))
+                return ValidationMessage._0DoesNotHaveAValid1Format.NiceToString().FormatWith("{0}", pi.NiceName());
+
+
+            return base.PropertyValidation(pi);
         }
 
         string displayName;
@@ -448,7 +475,7 @@ namespace Signum.Entities.Mailing
                 DisplayName = DisplayName,
                 EmailAddress = EmailAddress,
                 EmailOwner = EmailOwner
-            }; 
+            };
         }
 
         public bool Equals(EmailAddressEntity other)
