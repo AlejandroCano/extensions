@@ -10,6 +10,7 @@ using System.Linq.Expressions;
 using System.Xml.Linq;
 using Signum.Utilities.DataStructures;
 using Signum.Entities.UserQueries;
+using Signum.Entities.Omnibox;
 
 namespace Signum.Entities.Dashboard
 {
@@ -54,7 +55,13 @@ namespace Signum.Entities.Dashboard
             set { Set(ref style, value); }
         }
 
-        [ImplementedBy(typeof(UserChartPartEntity), typeof(UserQueryPartEntity), typeof(CountSearchControlPartEntity), typeof(LinkListPartEntity))]
+        [ImplementedBy(
+            typeof(UserChartPartEntity),
+            typeof(UserQueryPartEntity),
+            typeof(CountSearchControlPartEntity),
+            typeof(LinkListPartEntity),
+            typeof(OmniboxPanelPartEntity),
+            typeof(LinkPartEntity))]
         IPartEntity content;
         public IPartEntity Content
         {
@@ -370,6 +377,44 @@ namespace Signum.Entities.Dashboard
         {
             Links.Syncronize(element.Elements().ToList(), (le, x) => le.FromXml(x));
         }
+    }
+
+    [Serializable, EntityKind(EntityKind.Part, EntityData.Master)]
+    public class LinkPartEntity : Entity, IPartEntity
+    {
+        LinkElementEntity link;
+        public LinkElementEntity Link
+        {
+            get { return link; }
+            set { Set(ref link, value); }
+        }
+
+        public override string ToString()
+        {
+            return "{0} ({1})".FormatWith(link.Label, link.Link);
+        }
+
+        public bool RequiresTitle
+        {
+            get { return true; }
+        }
+
+        public IPartEntity Clone()
+        {
+            return new LinkPartEntity
+            {
+                 Link=this.Link.Clone()
+            };
+        }
+
+        public XElement ToXml(IToXmlContext ctx)
+        {
+            return new XElement("LinkPart",
+                this.ToXml(ctx));
+        }
+        
+        public void FromXml(XElement element, IFromXmlContext ctx)
+        { }
     }
 
     [Serializable]

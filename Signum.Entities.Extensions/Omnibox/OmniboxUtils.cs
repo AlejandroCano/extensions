@@ -4,6 +4,9 @@ using System.Linq;
 using System.Text;
 using Signum.Utilities;
 using System.ComponentModel;
+using Signum.Entities.Dashboard;
+using System.Xml.Linq;
+using Signum.Entities.UserAssets;
 
 namespace Signum.Entities.Omnibox
 {
@@ -189,5 +192,29 @@ namespace Signum.Entities.Omnibox
         ComplementWordsRegex,
         [Description("Search...")]
         Search,
+    }
+
+    [Serializable, EntityKind(EntityKind.Part, EntityData.Master)]
+    public class OmniboxPanelPartEntity : Entity, IPartEntity
+    {
+        bool requiresTitle;
+        public bool RequiresTitle
+        {
+            get { return requiresTitle; }
+            set { Set(ref requiresTitle, value); }
+        }
+
+        public IPartEntity Clone()
+        {
+            return new OmniboxPanelPartEntity();
+        }
+
+        public XElement ToXml(IToXmlContext ctx)
+        {
+            return new XElement("OmniboxPanelPartEntity", this);
+        }
+
+        public void FromXml(XElement element, IFromXmlContext ctx)
+        { }
     }
 }
