@@ -89,7 +89,7 @@ namespace Signum.Engine.Mailing
 
                         if (CacheLogic.WithSqlDependency)
                         {
-                            SetSqlDepndency();
+                            //SetSqlDepndency();
                         }
 
                         while (autoResetEvent.WaitOne())
@@ -153,7 +153,7 @@ namespace Signum.Engine.Mailing
                                     }
                                 }
                                 SetTimer();
-                                SetSqlDepndency();
+                                //SetSqlDepndency();
                             }
                         }
                     }
