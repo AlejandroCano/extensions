@@ -884,6 +884,7 @@
     <Member Name="Links" Description="Enlaces" />
     <Member Name="RequiresTitle" Description="Requiere título" />
   </Type>
+  <Type Name="LinkPartEntity" />
   <Type Name="MapMessage">
     <Member Name="Color" Description="Color" />
     <Member Name="Columns" Description="Columnas" />
@@ -930,7 +931,7 @@
     <Member Name="Sent" Description="Enviado" />
   </Type>
   <Type Name="NewsletterEntity" Description="Newsletter">
-    <Member Name="DisplayFrom" Description="Visualizarlo desde" />
+    <Member Name="DisplayFrom" Description="&quot;De&quot; para mostrar" />
     <Member Name="From" Description="De" />
     <Member Name="Name" Description="Nombre" />
     <Member Name="Query" Description="Consulta" />
@@ -998,6 +999,7 @@
     <Member Name="Unknown" Description="Desconocido" />
     <Member Name="Yes" Description="sí" />
   </Type>
+  <Type Name="OmniboxPanelPartEntity" />
   <Type Name="OperationAllowed">
     <Member Name="Allow" Description="Permitir" />
     <Member Name="DBOnly" Description="Sólo BBDD" />
@@ -1614,6 +1616,7 @@
     <Member Name="SaveNew" Description="Alta" />
     <Member Name="SetPassword" Description="Establecer la contraseña" />
   </Type>
+  <Type Name="UserQueryCountPartEntity" />
   <Type Name="UserQueryEntity" Description="Consulta de Usuario">
     <Member Name="AllowSelection" Description="Permitir la selección" />
     <Member Name="Columns" Description="Columnas" />
