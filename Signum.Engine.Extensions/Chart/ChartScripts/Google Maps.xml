@@ -1,0 +1,167 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<ChartScript GroupBy="Never">
+  <Columns>
+    <Column DisplayName="Lng" ColumnType="Real" />
+    <Column DisplayName="Lat" ColumnType="Real" />
+    <Column DisplayName="Label" ColumnType="String" IsOptional="true" />
+    <Column DisplayName="Icono" ColumnType="String" IsOptional="true" />
+    <Column DisplayName="Descripcion" ColumnType="String" IsOptional="true" />
+    <Column DisplayName="Titulo" ColumnType="String" IsOptional="true" />
+  </Columns>
+  <Parameters>
+    <Parameter Name="route" Type="Number" ValueDefinition="0" />
+  </Parameters>
+  <Icon FileName="Google-Maps-icon.png"><![CDATA[iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAYAAACM/rhtAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAYdEVYdFNvZnR3YXJlAHBhaW50Lm5ldCA0LjAuOWwzfk4AAAQfSURBVFhH7ZjZb0xRHMf7PxBv/g0RHpDaZylaER48WKoE8eQBoehUN1OCxtJMaUntYt9Ce0eiHZrago6ZjlmqzOhiCUKbOeZ355zpWX739rYGkfgmn4c553fP75Nzl7kzOf903JrjcLXmiLs1ZyLbwLrVXscR2sp6qprsY6u9TvKncXudtVTBOG6v4wV2MFDZPJtUNc8hngeF5FjbGkucaN8grFHhyyMR21QSXDCNhPKmkca6ucJ8igBVUbPv9rwxfDHI/Er4tYCIPS2Gwdede1w0jiqJYQW7NRttkU7Z3Vx9HIT7v3bTUTGld6aQ8rvTdVLXVaYZg+2aGVDXH11N4uFVhCqJgYILz7bTloTc8u9VGgEgjKW8CeTUekCWOZ07mYTzxbG3dYt0OVQQLtBvA59oK0LCfe1oIx4sVZpyTZHKljxBZOeECRn4cYAJ9sQ2N1K1dOC2pz30yE0w7oWO0moxcl3NDUdGAHaNF3RPmogKtl6qS1C1dJLJ5IgFASxyTWWr8Q52cuPBvKm6XMvFY6T1suf3CT5/d0ep4wWNSMRXE98Vj07WBMtSNwYWuQ6ed5gUI2CfkpHLqiCABavjr0WeTttkQe6vCcYCK0hwviooy1kS3HNvHtoEQ05b7LxS8yGWfgADvFx7bdnoBCFyEyPkyPNMjNG5JNd09wBLguVNM5RmGHL4OVkOaLlUr8s9OuRC5QBFsOdLVBGE8M0wKppm0sp0+DlMjgmY7R6gCMrfJHz4pjJ82FiF5jCVAzpW5gufZVBBuSEf+Q1FfmFg41UW5HSBmw3KGI+hIFDftpa2tRZ2XHP7ElTO/3AXKmGGqSADri94ZHz78Yl8+d5PAu/vU6WhsNp3oUJUjpGIFKIiRlgSlMEC473RIkRI/MzoDm5AhWSyJohJLK1oIwtLX5EbmgudB1ou1qNijKwJQuLhodO78eB1XY4HTi8vx3gbWofKAaMSPPd0K1VS09vtIgWlAUWOYS8Oo5KA7+rR7AgCZhkYTKJyPB/fLEMlE5GVIxes9S2nrUcWTExmuJvIUNAXPUPbqBn40UU+950iH+IHCEkO0lE8mJTMLa0ElQQUwZr7i5WvujNPNuk7ee3B0M9BRl/XCmLb1kEr1ew+341KYchrU0RB/m3miG9Z5jT3IM+4g2drhQZG4WuGw178Wu6jCHpgUfj/hcmxX/k8N7070QZY8kvUuuFgN9H72JaTVG0og8mBjJwsBjh3RNBFGXKK9ofQOitQJTGVzbMM5WzFUXQhnrlbxWuypLELrbMCVRLj1uwNmFy+K4gugsHHud2P1lhA/NuDTzy8PsbLIQebwgebH44Clz9CVYzT2+sZPxo5gA82b0ZBqf8EVbCe1EENKRJWWFPzOgGPK8C27SVaI7PQ5T9OW/3Pb0pOzk/RDnKXK1xnKwAAAABJRU5ErkJggg==]]></Icon>
+  <Script><![CDATA[function DrawChart(chart, data) {
+
+    debugger;
+
+
+
+    var object = new Object();
+
+    object.stringId = function () {
+        var text = "";
+        var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+        for (var i = 0; i < 5; i++)
+            text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+        return text;
+    };
+
+
+    var sid = object.stringId();
+
+    var parentDiv = chart[0][0].parentElement;
+
+
+
+    var coords = $.map(data.rows, function (e) {
+        return {
+            lng: e.c0.key,
+            lat: e.c1.key,
+            lab: (e.c2 ? e.c2.key : null),
+            ico: (e.c3 ? e.c3.key : null),
+            cont: (e.c4 ? e.c4.key : null),
+            title: (e.c5 ? e.c5.key : null)
+
+
+        };
+    });
+
+
+    if (window["loadMapFunc" + sid] == undefined) {
+
+
+
+        window["loadMapFunc" + sid] = function LoadMap(mapap, coordenadas, route) {
+
+
+            var mapOptions = {
+                center: new google.maps.LatLng(coordenadas[0].lat, coordenadas[0].lng, coordenadas[0].lab, coordenadas[0].ico, coordenadas[0].cont, coordenadas[0].title),
+                // zoom: 8, //Not required.
+                mapTypeId: google.maps.MapTypeId.ROADMAP
+            };
+
+            var mapa = new google.maps.Map(mapap, mapOptions);
+
+
+            var latlngbounds = new google.maps.LatLngBounds();//se encargara de los limites del mapa
+
+            for (var i = 0; i < coordenadas.length; i++) {
+
+
+                //var image = coords.ico;//'https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png';
+                //var labelM = coord.lab;
+                // var popup = "hola";  
+
+                var datacord = coordenadas[i];
+
+                var myLatlng = new google.maps.LatLng(datacord.lat, datacord.lng, datacord.lab, datacord.icon, datacord.title);
+                /*si se quiere usar  la funcion de popup  meter este campo en los parametros de marker "customInfo:popup"*/
+                var marcador = new google.maps.Marker({
+                    position: myLatlng,
+                    map: mapa,
+                    title: datacord.title,
+                    label: datacord.lab,
+                    icon: datacord.icon
+
+                });
+                if (route == 1) {
+                    var rutas = new google.maps.Polyline
+                    ({
+                        path: coordenadas,
+                        geodesic: true,
+                        strokeColor: '#FF2345',
+                        strokeOpacity: 1.0,
+                        strokeWeight: 2
+                    });
+
+                    rutas.setMap(mapa);
+                };
+
+                /*  google.maps.event.addListener(marcador, 'click', function() {
+ alert(this.customInfo);
+     });*/
+                var content = coordenadas[i].cont;
+                var infoWindow = new google.maps.InfoWindow({ content });
+
+                (function (marcador, datacord) {
+                    google.maps.event.addListener(marcador, "click", function (e) {
+
+                        infoWindow.open(mapa, marcador);
+                    });
+                })(marcador, datacord);
+
+
+                //Extendemos los limites segun la posicion de cada marcador
+                latlngbounds.extend(marcador.position);
+            }
+            //Damos al mapa sus limites
+            var bounds = new google.maps.LatLngBounds();
+
+            //Se centra y ajusta el zom segun ubicacion de marcadores
+            mapa.setCenter(latlngbounds.getCenter());
+            mapa.fitBounds(latlngbounds);
+        }
+
+    }
+
+
+    var initFunc = function () { window["loadMapFunc" + sid](parentDiv, coords, data.parameters.route); };
+
+
+    if (window["googleapisMapsFunInvoqe"] == undefined) {
+        window["googleapisMapsFunInvoqe"] = function () {
+
+            if (typeof google === 'object' && typeof google.maps === 'object') {
+                for (i = 0; i < window.array_of_functions.length; i++) {
+                    if (window.array_of_functions[i][1] == 0) {
+                        window.array_of_functions[i][1] = 1;
+                        window.array_of_functions[i][0]();
+                    }
+                }
+            }
+
+        };
+
+        window.array_of_functions = [[initFunc, 0]];
+
+        if (!(typeof google === 'object' && typeof google.maps === 'object')) {
+            $.getScript("https://maps.googleapis.com/maps/api/js?key=AIzaSyAbvMbzZeavFlEWTaYYCVYqTfMY0UI06Io&libraries=visualization&callback=window.googleapisMapsFunInvoqe");
+        }
+
+
+
+    }
+    else {
+        window.array_of_functions.push([initFunc, 0]);
+    }
+
+
+    window["googleapisMapsFunInvoqe"]();
+
+
+}]]></Script>
+</ChartScript>
