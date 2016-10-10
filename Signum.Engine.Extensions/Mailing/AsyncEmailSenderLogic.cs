@@ -153,7 +153,10 @@ namespace Signum.Engine.Mailing
                                     }
                                 }
                                 SetTimer();
-                                SetSqlDepndency();
+                                if (CacheLogic.WithSqlDependency)
+                                {
+                                    SetSqlDepndency();
+                                }
                             }
                         }
                     }
