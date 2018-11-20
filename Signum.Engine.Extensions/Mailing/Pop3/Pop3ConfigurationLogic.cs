@@ -223,7 +223,7 @@ namespace Signum.Engine.Mailing.Pop3
                         using (Transaction tr = Transaction.ForceNew())
                         {
                             reception.EndDate = TimeZoneManager.Now;
-                            reception.LastServerMessageUID =   lastSuid ;
+                            reception.LastServerMessageUID = lastSuid;
                             reception.MailsFromDifferentAccounts = anomalousReception;
                             reception.Save();
                             tr.Commit();
@@ -315,13 +315,20 @@ namespace Signum.Engine.Mailing.Pop3
             {
                 client.DeleteMessage(mi);
 
-                (from em in Database.Query<EmailMessageEntity>()
-                 let ri = em.Mixin<EmailReceptionMixin>().ReceptionInfo
-                 where ri != null && ri.UniqueId == mi.Uid
-                 select em)
-                 .UnsafeUpdate()
-                 .Set(em => em.Mixin<EmailReceptionMixin>().ReceptionInfo.DeletionDate, em => now)
-                 .Execute();
+                using (Transaction tr = Transaction.ForceNew())
+                {
+
+                    (from em in Database.Query<EmailMessageEntity>()
+                     let ri = em.Mixin<EmailReceptionMixin>().ReceptionInfo
+                     where ri != null && ri.UniqueId == mi.Uid
+                     select em)
+                     .UnsafeUpdate()
+                     .Set(em => em.Mixin<EmailReceptionMixin>().ReceptionInfo.DeletionDate, em => now)
+                     .Execute();
+
+                    tr.Commit();
+                }
+
             }
         }
 
@@ -349,25 +356,30 @@ namespace Signum.Engine.Mailing.Pop3
                              where ri != null && l.Contains(ri.UniqueId)
                              select KVP.Create(ri.UniqueId, (DateTime?)ri.SentDate))).ToDictionary();
 
+
+                        var newEmails = messageInfos.Count - already.Count;
+
                         using (Transaction tr = Transaction.ForceNew())
                         {
-                            reception.NewEmails = messageInfos.Count - already.Count;
+                            reception.ServerEmails = messageInfos.Count;
+                            reception.NewEmails = newEmails;
                             reception.Save();
                             tr.Commit();
                         }
 
-                        foreach (var mi in messageInfos)
-                        {
-                            if (GettingCancel)
-                                break;
+                        if (newEmails > 0)
+                            foreach (var mi in messageInfos)
+                            {
+                                if (GettingCancel)
+                                    break;
 
-                            var sent = already.TryGetS(mi.Uid);
-                            Boolean anomalousReception = false;
-                            if (sent == null)
-                                sent = SaveEmail(config, reception, client, mi, ref anomalousReception);
+                                var sent = already.TryGetS(mi.Uid);
+                                Boolean anomalousReception = false;
+                                if (sent == null)
+                                    sent = SaveEmail(config, reception, client, mi, ref anomalousReception);
 
-                            DeleteSavedEmail(config, now, client, mi, sent);
-                        }
+                                DeleteSavedEmail(config, now, client, mi, sent);
+                            }
 
                         using (Transaction tr = Transaction.ForceNew())
                         {
@@ -434,7 +446,7 @@ namespace Signum.Engine.Mailing.Pop3
 
                         var duplicateList = Database.Query<EmailMessageEntity>()
                                .Where(a => a.BodyHash == email.BodyHash)
-                               .Select(a => new { l = a.ToLite(), date =(DateTime?) a.Mixin<EmailReceptionMixin>().ReceptionInfo.ReceivedDate, bh = a.BodyHash, suid = a.Mixin<EmailReceptionMixin>().ReceptionInfo.UniqueId })
+                               .Select(a => new { l = a.ToLite(), date = (DateTime?)a.Mixin<EmailReceptionMixin>().ReceptionInfo.ReceivedDate, bh = a.BodyHash, suid = a.Mixin<EmailReceptionMixin>().ReceptionInfo.UniqueId })
                                .Distinct().ToList();
 
                         if (duplicateList.Any(e => e.suid == email.Mixin<EmailReceptionMixin>().ReceptionInfo.UniqueId))
@@ -446,12 +458,13 @@ namespace Signum.Engine.Mailing.Pop3
                         {
                             var duplicate = duplicateList.OrderByDescending(e => e.date).FirstOrDefault();
 
-                            if (duplicate != null && AreDuplicates(email, duplicate.l.Retrieve()))
+                            EmailMessageEntity dup = null;
+                            if (duplicate != null)
+                                dup = duplicate.l.Retrieve();
+
+                            if (duplicate != null && AreDuplicates(email, dup))
                             {
-                                var dup = duplicate.l.Entity;
-
                                 email.AssignEntities(dup);
-
                                 AssociateDuplicateEmail?.Invoke(email, dup);
                             }
                             else
