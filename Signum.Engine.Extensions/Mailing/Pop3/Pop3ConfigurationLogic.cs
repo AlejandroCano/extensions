@@ -139,13 +139,27 @@ namespace Signum.Engine.Mailing.Pop3
                     {
                         using (Transaction tr = Transaction.None())
                         {
-                            var result = e.ReceiveEmails();
+                            var result = e.ReceiveEmails(false);
                             return tr.Commit(result);
                         }
                     }
                 }.Register();
 
-                SchedulerLogic.ExecuteTask.Register((Pop3ConfigurationEntity smtp) => smtp.ReceiveEmails().ToLite());
+                new Graph<Pop3ReceptionEntity>.ConstructFrom<Pop3ConfigurationEntity>(Pop3ConfigurationOperation.ReceiveLast15Emails)
+                {
+                    AllowsNew = true,
+                    Lite = false,
+                    Construct = (e, _) =>
+                    {
+                        using (Transaction tr = Transaction.None())
+                        {
+                            var result = e.ReceiveEmails(true);
+                            return tr.Commit(result);
+                        }
+                    }
+                }.Register();
+
+                SchedulerLogic.ExecuteTask.Register((Pop3ConfigurationEntity smtp) => smtp.ReceiveEmails(false).ToLite());
 
                 SimpleTaskLogic.Register(Pop3ConfigurationAction.ReceiveAllActivePop3Configurations, () =>
                 {
@@ -154,7 +168,7 @@ namespace Signum.Engine.Mailing.Pop3
 
                     foreach (var item in Database.Query<Pop3ConfigurationEntity>().Where(a => a.Active).ToList())
                     {
-                        item.ReceiveEmails();
+                        item.ReceiveEmails(false);
                     }
 
                     return null;
@@ -164,15 +178,15 @@ namespace Signum.Engine.Mailing.Pop3
 
         public static event Func<Pop3ConfigurationEntity, IDisposable> SurroundReceiveEmail;
 
-        public static Pop3ReceptionEntity ReceiveEmails(this Pop3ConfigurationEntity config)
+        public static Pop3ReceptionEntity ReceiveEmails(this Pop3ConfigurationEntity config, bool forceGetLast15FromServer)
         {
-            if (config.FullComparation)
+            if (config.FullComparation && !forceGetLast15FromServer)
                 return ReceiveEmailsFullComparation(config);
             else
-                return ReceiveEmailsPartialComparation(config);
+                return ReceiveEmailsPartialComparation(config, forceGetLast15FromServer);
         }
 
-        public static Pop3ReceptionEntity ReceiveEmailsPartialComparation(this Pop3ConfigurationEntity config)
+        public static Pop3ReceptionEntity ReceiveEmailsPartialComparation(this Pop3ConfigurationEntity config, bool forceGetLast15FromServer)
         {
             if (!EmailLogic.Configuration.ReciveEmails)
                 throw new InvalidOperationException("EmailLogic.Configuration.ReciveEmails is set to false");
@@ -180,7 +194,6 @@ namespace Signum.Engine.Mailing.Pop3
             using (HeavyProfiler.Log("ReciveEmails"))
             using (Disposable.Combine(SurroundReceiveEmail, func => func(config)))
             {
-
                 var maxReceptionForTime = 15;
 
                 Pop3ReceptionEntity reception = Transaction.ForceNew().Using(tr => tr.Commit(
@@ -191,17 +204,14 @@ namespace Signum.Engine.Mailing.Pop3
                 {
                     using (var client = GetPop3Client(config))
                     {
-
-                        List<MessageUid> messagesToSave = GetMessagesToSave(config, maxReceptionForTime, client);
-
-
+                        List<MessageUid> messagesToSave = GetMessagesToSave(config, maxReceptionForTime, client, forceGetLast15FromServer);
+                        
                         using (Transaction tr = Transaction.ForceNew())
                         {
                             reception.NewEmails = messagesToSave.Count;
                             reception.Save();
                             tr.Commit();
                         }
-
 
                         Boolean anomalousReception = false;
                         string lastSuid = null;
@@ -213,12 +223,7 @@ namespace Signum.Engine.Mailing.Pop3
                             var sent = SaveEmail(config, reception, client, mi, ref anomalousReception);
                             lastSuid = mi.Uid;
                             DeleteSavedEmail(config, now, client, mi, sent);
-
                         }
-
-
-
-
 
                         using (Transaction tr = Transaction.ForceNew())
                         {
@@ -255,54 +260,46 @@ namespace Signum.Engine.Mailing.Pop3
             }
         }
 
-        private static List<MessageUid> GetMessagesToSave(Pop3ConfigurationEntity config, int maxReceptionForTime, IPop3Client client)
+        private static List<MessageUid> GetMessagesToSave(Pop3ConfigurationEntity config, int maxReceptionForTime, IPop3Client client, bool forceGetLast15FromServer)
         {
             var messageInfos = client.GetMessageInfos().OrderBy(m => m.Number);
-
-
+            
             List<MessageUid> messagesToSave = null;
-
-
+            
             var lastSuid = Database.Query<Pop3ReceptionEntity>()
                .Where(e => e.Pop3Configuration.RefersTo(config))
                .OrderByDescending(r => r.EndDate)
                .Select(e => new { e.MailsFromDifferentAccounts, e.LastServerMessageUID }).FirstOrDefault();
 
-            if (lastSuid != null && lastSuid.MailsFromDifferentAccounts) //it seems that the account can download emails from other accounts so it will be last id
+            if (!forceGetLast15FromServer && lastSuid != null && lastSuid.MailsFromDifferentAccounts) //it seems that the account can download emails from other accounts so it will be last id
             {
                 var maxId = messageInfos.Where(e => e.Uid == lastSuid.LastServerMessageUID).Select(e => e.Number).SingleOrDefaultEx();
                 messagesToSave = messageInfos.Where(e => e.Number > maxId).Take(maxReceptionForTime).ToList();
             }
             else
             {
+                var lastsEmails = forceGetLast15FromServer ? null :
+                    Database.Query<EmailMessageEntity>()
+                     .Where(e => e.Mixin<EmailReceptionMixin>().ReceptionInfo.Reception.Entity.Pop3Configuration.RefersTo(config))
+                     .Select(d => new { d.CreationDate, d.Mixin<EmailReceptionMixin>().ReceptionInfo.UniqueId })
+                     .OrderByDescending(c => c.CreationDate).Take(maxReceptionForTime).ToDictionary(e => e.UniqueId);
 
-                var lastsEmails = Database.Query<EmailMessageEntity>()
-                 .Where(e => e.Mixin<EmailReceptionMixin>().ReceptionInfo.Reception.Entity.Pop3Configuration.RefersTo(config))
-                 .Select(d => new { d.CreationDate, d.Mixin<EmailReceptionMixin>().ReceptionInfo.UniqueId })
-                 .OrderByDescending(c => c.CreationDate).Take(maxReceptionForTime).ToDictionary(e => e.UniqueId);
-
-                if (lastsEmails.Any())
+                if (lastsEmails != null && lastsEmails.Any())
                 {
                     var messageJoinDict = messageInfos.ToDictionary(e => e.Uid).OuterJoinDictionarySC(lastsEmails, (key, v1, v2) => new { key, v1, v2 });
                     var messageMachings = messageJoinDict.Where(e => e.Value.v1 != null && e.Value.v2 != null).ToList();
                     var maxId = !messageMachings.Any() ? 0 : messageMachings.Select(e => e.Value.v1.Value.Number).Max();
-
-
+                    
                     messagesToSave = !messageMachings.Any() ?
                         messageInfos.ToList() :
                         messageInfos.Where(m => m.Number > maxId).OrderBy(m => m.Number)
                         .Take(maxReceptionForTime).ToList();// max maxReceptionForTime message per time
-
-
                 }
                 else
                 {
-
                     // the first time only get the last maxReceptionForTime messages
                     messagesToSave = messageInfos.OrderByDescending(m => m.Number).Take(maxReceptionForTime).ToList();
-
                 }
-
             }
 
             return messagesToSave;

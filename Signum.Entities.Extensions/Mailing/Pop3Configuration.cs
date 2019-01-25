@@ -65,6 +65,7 @@ namespace Signum.Entities.Mailing
     {
         public static ExecuteSymbol<Pop3ConfigurationEntity> Save;
         public static ConstructSymbol<Pop3ReceptionEntity>.From<Pop3ConfigurationEntity> ReceiveEmails;
+        public static ConstructSymbol<Pop3ReceptionEntity>.From<Pop3ConfigurationEntity> ReceiveLast15Emails;
     }
 
     [AutoInit]
