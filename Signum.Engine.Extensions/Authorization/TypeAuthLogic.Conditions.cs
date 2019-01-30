@@ -93,6 +93,17 @@ namespace Signum.Engine.Authorization
                 modified.Remove(entity);
         }
 
+        public static void RemovePreRealCommitChecking(Lite<IEntity> lite)
+        {
+            var created = (List<Entity>)Transaction.UserData.TryGetC(CreatedKey);
+            if (created != null && created.Any(c => lite.RefersTo(c)))
+                created.Remove(created.FirstEx(c => lite.RefersTo(c)));
+
+            var modified = (List<Entity>)Transaction.UserData.TryGetC(ModifiedKey);
+            if (modified != null && modified.Any(m => lite.RefersTo(m)))
+                modified.Remove(modified.FirstEx(m => lite.RefersTo(m)));
+        }
+
         static void Transaction_PreRealCommit(Dictionary<string, object> dic)
         {
             using (OnInSave())
