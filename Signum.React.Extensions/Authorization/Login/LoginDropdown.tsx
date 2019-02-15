@@ -1,11 +1,11 @@
-﻿import * as React from 'react'
+import * as React from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { AuthMessage, UserEntity } from '../Signum.Entities.Authorization'
 import * as AuthClient from '../AuthClient'
 import { DropdownToggle, NavItem, UncontrolledDropdown, DropdownMenu, DropdownItem, NavLink, LinkContainer } from '@framework/Components';
 
 
-export default class LoginDropdown extends React.Component<{}, { user: UserEntity }> {
+export default class LoginDropdown extends React.Component<{ maxLenght?: number}, { user: UserEntity }> {
 
   render() {
     const user = AuthClient.currentUser();
@@ -17,11 +17,12 @@ export default class LoginDropdown extends React.Component<{}, { user: UserEntit
           </LinkContainer>
         </NavItem>
       );
+    const userName = this.props.maxLenght && user.userName!.etc(this.props.maxLenght) || user.userName!;
 
     return (
       <UncontrolledDropdown className="sf-user" id="sfUserDropDown" nav inNavbar>
         <DropdownToggle nav caret>
-          {user.userName!}
+          {userName}
         </DropdownToggle>
         <DropdownMenu right style={{ minWidth: "200px" }}>
           <LinkContainer to="~/auth/changePassword">
