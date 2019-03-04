@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using Signum.Engine.Maps;
 using Signum.Engine.DynamicQuery;
@@ -44,7 +44,12 @@ namespace Signum.Engine.Authorization
 
         static void UserTicketLogic_Saving(UserEntity user)
         {
-            if (!user.IsNew && user.IsGraphModified & user.InDBEntity(u => u.PasswordHash != user.PasswordHash))
+            DeletingUserTikectIfTheKeyIsChanged(user);
+        }
+
+        private static void DeletingUserTikectIfTheKeyIsChanged(UserEntity user)
+        {
+            if (!user.IsNew && user.IsGraphModified & user.InDBEntity(u => !u.PasswordHash.SequenceEqual(user.PasswordHash)))
                 user.UserTickets().UnsafeDelete();
         }
 
