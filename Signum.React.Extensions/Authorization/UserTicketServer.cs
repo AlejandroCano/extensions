@@ -58,11 +58,19 @@ namespace Signum.React.Authorization
 
             string ticketText = UserTicketLogic.NewTicket(httpConnection.LocalIpAddress.ToString());
 
-            ac.HttpContext.Response.Cookies.Append(CookieName, ticketText, new CookieOptions
+
+
+            var cookiet = new CookieOptions
             {
-                Domain = ac.HttpContext.Request.Host.Host.ToString(),
                 Expires = DateTime.UtcNow.Add(UserTicketLogic.ExpirationInterval),
-            });
+            };
+
+
+            var domain = ac.HttpContext.Request.Host.Host.ToString();
+            if (!domain.Contains("localhost") && !domain.Contains("127.0.0.1"))
+                cookiet.Domain = domain;
+
+            ac.HttpContext.Response.Cookies.Append(CookieName, ticketText, cookiet);
         }
     }
 }
