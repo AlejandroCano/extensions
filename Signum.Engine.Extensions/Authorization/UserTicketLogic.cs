@@ -66,21 +66,38 @@ namespace Signum.Engine.Authorization
             using (AuthLogic.Disable())
             using (Transaction tr = new Transaction())
             {
-                CleanExpiredTickets(UserEntity.Current);
-
-                UserTicketEntity result = new UserTicketEntity
-                {
-                    User = UserEntity.Current.ToLite(),
-                    Device = device,
-                    ConnectionDate = TimeZoneManager.Now,
-                    Ticket = Guid.NewGuid().ToString(),
-                };
-
-                result.Save();
+                UserTicketEntity result = TicketNew(device);
 
                 return tr.Commit(result.StringTicket());
             }
 
+        }
+        public static UserTicketEntity NewTicketGetEntity(string device)
+        {
+            using (AuthLogic.Disable())
+            using (Transaction tr = new Transaction())
+            {
+                UserTicketEntity result = TicketNew(device);
+
+                return tr.Commit(result);
+            }
+
+        }
+
+        private static UserTicketEntity TicketNew(string device)
+        {
+            CleanExpiredTickets(UserEntity.Current);
+
+            UserTicketEntity result = new UserTicketEntity
+            {
+                User = UserEntity.Current.ToLite(),
+                Device = device,
+                ConnectionDate = TimeZoneManager.Now,
+                Ticket = Guid.NewGuid().ToString(),
+            };
+
+            result.Save();
+            return result;
         }
 
         public static UserEntity UpdateTicket(string device, ref string ticket)
