@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Signum.Utilities;
 using System.Reflection;
 using Signum.Entities.Mailing;
@@ -43,7 +43,7 @@ namespace Signum.Entities.Authorization
             }
         }
 
-        public DateTime PasswordSetDate { get; private set; }
+        public DateTime PasswordSetDate { get;  set; }
 
         public bool PasswordNeverExpires { get; set; }
 
