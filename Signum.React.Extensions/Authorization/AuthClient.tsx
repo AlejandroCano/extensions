@@ -415,6 +415,12 @@ export module API {
   }
 
 
+  export function postLogin(response: API.LoginResponse) {
+    setAuthToken(response.token);
+    setCurrentUser(response.userEntity);
+    Options.onLogin();
+  }
+
   export function refreshToken(oldToken: string): Promise<LoginResponse> {
     return ajaxPost<LoginResponse>({ url: "~/api/auth/refreshToken", avoidAuthToken: true }, oldToken);
   }

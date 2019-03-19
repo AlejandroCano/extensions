@@ -26,9 +26,7 @@ export default class Login extends React.Component<{}, { modelState?: ModelState
 
     AuthClient.API.login(request)
       .then(response => {
-        AuthClient.setAuthToken(response.token);
-        AuthClient.setCurrentUser(response.userEntity);
-        AuthClient.Options.onLogin();
+        AuthClient.API.postLogin(response);
       })
       .catch((e: ValidationError) => {
         if (e.modelState)
@@ -36,6 +34,8 @@ export default class Login extends React.Component<{}, { modelState?: ModelState
       })
       .done();
   }
+
+
 
   componentDidMount() {
     this.userName!.focus();
