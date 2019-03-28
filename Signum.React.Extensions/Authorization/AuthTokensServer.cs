@@ -122,7 +122,27 @@ namespace Signum.React.Authorization
 
                 using (var ms = new MemoryStream(array))
                 using (DeflateStream ds = new DeflateStream(ms, CompressionMode.Decompress))
-                    return (AuthToken)formatter.Deserialize(ds);
+                {
+                    var at = (AuthToken)formatter.Deserialize(ds);
+
+                    if (TimeZoneManager.Mode == TimeZoneMode.Utc && at.User.PasswordSetDate.Kind != DateTimeKind.Utc)
+                    {
+
+                        var mModified = at.User.Modified;
+                        var dttUtc = new DateTime(at.User.PasswordSetDate.Ticks, DateTimeKind.Utc);
+                        at.User.PasswordSetDate = new DateTime();
+                        at.User.PasswordSetDate = dttUtc;
+                        if (mModified == ModifiedState.Clean || mModified == ModifiedState.Sealed)
+                            at.User.SetCleanModified(mModified == ModifiedState.Sealed);
+
+                    }
+
+                    return at;
+                }
+
+
+
+
             }
             catch (Exception)
             {
