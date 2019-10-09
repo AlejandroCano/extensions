@@ -20,7 +20,6 @@
   </ItemGroup>
   
   <ItemGroup>
-    <PackageReference Include="dotMorten.Microsoft.SqlServer.Types" Version="1.1.0" />
     <PackageReference Include="Signum.Analyzer" Version="2.4.5" />
     <PackageReference Include="Signum.MSBuildTask" Version="1.0.7" />
   </ItemGroup>
@@ -45,6 +44,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Business\Microsoft.SqlServer.Types\Microsoft.SqlServer.Types.csproj" />
     <ProjectReference Include="..\..\Framework\Signum.Engine\Signum.Engine.csproj" />
     <ProjectReference Include="..\..\Framework\Signum.Entities\Signum.Entities.csproj" />
     <ProjectReference Include="..\..\Framework\Signum.Utilities\Signum.Utilities.csproj" />
