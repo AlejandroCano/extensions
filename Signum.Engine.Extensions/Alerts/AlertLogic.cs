@@ -228,7 +228,11 @@ namespace Signum.Engine.Alerts
                 ToStates = { AlertState.Saved },
                 Execute = (a, args) =>
                 {
-                    a.AlertDate = args.GetArg<DateTime>();
+                    var date = args.GetArg<DateTime>();
+                    if (TimeZoneManager.Mode == TimeZoneMode.Utc && date.Kind == DateTimeKind.Local)
+                        a.AlertDate = date.ToUniversalTime();
+                    else
+                        a.AlertDate = date;
                 }
             }.Register();
         }
