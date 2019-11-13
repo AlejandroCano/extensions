@@ -364,7 +364,7 @@ namespace Signum.Web.Auth
 
         }
 
-        internal static void OnUserPreLogin(Controller controller, UserDN user)
+        public static void OnUserPreLogin(Controller controller, UserDN user)
         {
             if (UserPreLogin != null)
             {
