@@ -34,7 +34,7 @@ namespace Signum.Web.Auth
 
         public static JsModule Module = new JsModule("Extensions/Signum.Web.Extensions/Auth/Scripts/Auth");
 
-        public static string LoginView = ViewPrefix.FormatWith("Login");
+        public static Func<string> LoginView = () => ViewPrefix.FormatWith("Login");
         public static string LoginUserControlView = ViewPrefix.FormatWith("LoginUserControl");
         public static string ChangePasswordView = ViewPrefix.FormatWith("ChangePassword");
         public static string ChangePasswordSuccessView = ViewPrefix.FormatWith("ChangePasswordSuccess");

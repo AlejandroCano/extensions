@@ -309,7 +309,7 @@ namespace Signum.Web.Auth
                     ViewData["referrer"] = TempData["referrer"].ToString();
             }
 
-            return View(AuthClient.LoginView);
+            return View(AuthClient.LoginView());
         }
 
         [HttpPost]
@@ -386,7 +386,7 @@ namespace Signum.Web.Auth
         public ViewResult LoginError(string key, string error)
         {
             ModelState.AddModelError(key, error);
-            return View(AuthClient.LoginView);
+            return View(AuthClient.LoginView());
         }
 
 
