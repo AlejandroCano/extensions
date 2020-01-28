@@ -93,61 +93,63 @@ Write(Html.ValueLine(sc, s => s.DeliveryMethod));
             
             #line 7 "..\..\Mailing\Views\SmtpConfiguration.cshtml"
                                               
+
     
             
             #line default
             #line hidden
             
-            #line 8 "..\..\Mailing\Views\SmtpConfiguration.cshtml"
+            #line 9 "..\..\Mailing\Views\SmtpConfiguration.cshtml"
 Write(Html.EntityDetail(sc, s => s.Network));
 
             
             #line default
             #line hidden
             
-            #line 8 "..\..\Mailing\Views\SmtpConfiguration.cshtml"
+            #line 9 "..\..\Mailing\Views\SmtpConfiguration.cshtml"
                                           
-	
+
+    
             
             #line default
             #line hidden
             
-            #line 9 "..\..\Mailing\Views\SmtpConfiguration.cshtml"
+            #line 11 "..\..\Mailing\Views\SmtpConfiguration.cshtml"
 Write(Html.ValueLine(sc, s => s.PickupDirectoryLocation));
 
             
             #line default
             #line hidden
             
-            #line 9 "..\..\Mailing\Views\SmtpConfiguration.cshtml"
+            #line 11 "..\..\Mailing\Views\SmtpConfiguration.cshtml"
                                                        
-	
+    
             
             #line default
             #line hidden
             
-            #line 10 "..\..\Mailing\Views\SmtpConfiguration.cshtml"
+            #line 12 "..\..\Mailing\Views\SmtpConfiguration.cshtml"
 Write(Html.EntityDetail(sc, s => s.DefaultFrom));
 
             
             #line default
             #line hidden
             
-            #line 10 "..\..\Mailing\Views\SmtpConfiguration.cshtml"
+            #line 12 "..\..\Mailing\Views\SmtpConfiguration.cshtml"
                                               
-	
+    
             
             #line default
             #line hidden
             
-            #line 11 "..\..\Mailing\Views\SmtpConfiguration.cshtml"
+            #line 13 "..\..\Mailing\Views\SmtpConfiguration.cshtml"
 Write(Html.EntityRepeater(sc, s => s.AdditionalRecipients));
 
             
             #line default
             #line hidden
             
-            #line 11 "..\..\Mailing\Views\SmtpConfiguration.cshtml"
+            #line 13 "..\..\Mailing\Views\SmtpConfiguration.cshtml"
                                                          
 }
             

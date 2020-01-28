@@ -129,6 +129,20 @@ namespace Signum.Web.Mailing
                         new EmbeddedEntitySettings<SmtpNetworkDeliveryEmbedded> { PartialViewName = e => ViewPrefix.FormatWith("SmtpNetworkDelivery") },
                         new EmbeddedEntitySettings<ClientCertificationFileEmbedded> { PartialViewName = e => ViewPrefix.FormatWith("ClientCertificationFile")},
                     });
+
+                    OperationClient.AddSettings(new List<OperationSettings>
+                    {
+                        new EntityOperationSettings<SmtpConfigurationEntity>(SmtpConfigurationOperation.SetPassword)
+                        {
+                            Click = ctx => Module["setPassword"](ctx.Options(),
+                                new ValueLineBoxOptions(ValueLineType.TextBox, ctx.Prefix, "New"){
+                                    labelText =  SmtpConfigurationMessage.NewPassword.NiceToString(),
+                                    message = SmtpConfigurationMessage.EnterTheNewPassword.NiceToString(),
+                                    title = SmtpConfigurationMessage.NewPassword.NiceToString()
+                                },
+                                ctx.Url.Action((MailingController mc) => mc.SetSmtpPasswordOnOk()))
+                        },
+                    });
                 }
 
                 if (newsletter)
@@ -169,6 +183,20 @@ namespace Signum.Web.Mailing
                     {
                         new EntitySettings<Pop3ConfigurationEntity> { PartialViewName = e => ViewPrefix.FormatWith("Pop3Configuration") },
                         new EntitySettings<Pop3ReceptionEntity> { PartialViewName = e => ViewPrefix.FormatWith("Pop3Reception") },
+                    });
+
+                    OperationClient.AddSettings(new List<OperationSettings>
+                    {
+                        new EntityOperationSettings<Pop3ConfigurationEntity>(Pop3ConfigurationOperation.SetPassword)
+                        {
+                            Click = ctx => Module["setPassword"](ctx.Options(),
+                                new ValueLineBoxOptions(ValueLineType.TextBox, ctx.Prefix, "New"){
+                                    labelText =  SmtpConfigurationMessage.NewPassword.NiceToString(),
+                                    message = SmtpConfigurationMessage.EnterTheNewPassword.NiceToString(),
+                                    title = SmtpConfigurationMessage.NewPassword.NiceToString()
+                                },
+                                ctx.Url.Action((MailingController mc) => mc.SetPop3PasswordOnOk()))
+                        },
                     });
                 }
 

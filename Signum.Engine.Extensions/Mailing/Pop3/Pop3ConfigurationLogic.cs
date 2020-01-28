@@ -26,6 +26,7 @@ using System.Threading;
 using Signum.Engine.Extensions.Mailing.Pop3;
 using Signum.Utilities.ExpressionTrees;
 using Signum.Engine;
+using Signum.Services;
 
 namespace Signum.Engine.Mailing.Pop3
 {
@@ -81,7 +82,6 @@ namespace Signum.Engine.Mailing.Pop3
                 MixinDeclarations.AssertDeclared(typeof(EmailMessageEntity), typeof(EmailReceptionMixin));
 
                 sb.Include<Pop3ConfigurationEntity>()
-                    .WithSave(Pop3ConfigurationOperation.Save)
                     .WithQuery(dqm, s => new
                     {
                         Entity = s,
@@ -130,6 +130,32 @@ namespace Signum.Engine.Mailing.Pop3
                 dqm.RegisterExpression((Pop3ReceptionEntity r) => r.EmailMessages(), () => typeof(EmailMessageEntity).NicePluralName());
                 dqm.RegisterExpression((Pop3ReceptionEntity r) => r.Exceptions(), () => typeof(ExceptionEntity).NicePluralName());
                 dqm.RegisterExpression((ExceptionEntity r) => r.Pop3Reception(), () => typeof(Pop3ReceptionEntity).NiceName());
+
+                new Graph<Pop3ConfigurationEntity>.Execute(Pop3ConfigurationOperation.Save)
+                {
+                    AllowsNew = true,
+                    Lite = false,
+                    Execute = (sc, _) =>
+                    {
+                        if (sc.IsNew && sc.Password.HasText())
+                        {
+                            var ce = new CryptorEngine(Pop3ConfigurationEntity.GetCriptoKey());
+                            sc.Password = ce.Encrypt(sc.Password);
+                        }
+                    },
+                }.Register();
+
+                new Graph<Pop3ConfigurationEntity>.Execute(Pop3ConfigurationOperation.SetPassword)
+                {
+                    AllowsNew = false,
+                    Lite = true,
+                    Execute = (sc, args) =>
+                    {
+                        var password = args.GetArg<string>();
+                        var ce = new CryptorEngine(Pop3ConfigurationEntity.GetCriptoKey());
+                        sc.Password = ce.Encrypt(password);
+                    },
+                }.Register();
 
                 new Graph<Pop3ReceptionEntity>.ConstructFrom<Pop3ConfigurationEntity>(Pop3ConfigurationOperation.ReceiveEmails)
                 {

@@ -336,3 +336,14 @@ export function attachEmailReportTemplate(el: Lines.EntityLine, targetId: string
     el.entityChanged = (entity) => refreshImplementations(entity ? entity.runtimeInfo : null);
 
 }
+
+export function setPassword(options: Operations.EntityOperationOptions, vlb: Navigator.ValueLineBoxOptions, url: string) {
+    Navigator.valueLineBox(vlb).then(newPassword => {
+        if (!newPassword)
+            return;
+
+        options.controllerUrl = url;
+        options.requestExtraJsonData = { newPassword: newPassword };
+        Operations.executeDefault(options);
+    });
+}

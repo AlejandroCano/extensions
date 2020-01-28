@@ -13,6 +13,7 @@ using System.Net.Mail;
 using System.Net;
 using System.Security.Cryptography.X509Certificates;
 using Signum.Engine.Operations;
+using Signum.Services;
 
 namespace Signum.Engine.Mailing
 {
@@ -42,7 +43,26 @@ namespace Signum.Engine.Mailing
                 {
                     AllowsNew = true,
                     Lite = false,
-                    Execute = (sc, _) => { },
+                    Execute = (sc, _) => 
+                    {
+                        if (sc.IsNew && sc.Network != null && sc.Network.Password.HasText())
+                        {
+                            var ce = new CryptorEngine(SmtpConfigurationEntity.GetCriptoKey());
+                            sc.Network.Password = ce.Encrypt(sc.Network.Password);
+                        }
+                    },
+                }.Register();
+
+                new Graph<SmtpConfigurationEntity>.Execute(SmtpConfigurationOperation.SetPassword)
+                {
+                    AllowsNew = false,
+                    Lite = true,
+                    Execute = (sc, args) =>
+                    {
+                        var password = args.GetArg<string>();
+                        var ce = new CryptorEngine(SmtpConfigurationEntity.GetCriptoKey());
+                        sc.Network.Password = ce.Encrypt(password);
+                    },
                 }.Register();
             }
         }
@@ -73,7 +93,19 @@ namespace Signum.Engine.Mailing
                 SmtpClient client = EmailLogic.SafeSmtpClient(config.Network.Host, config.Network.Port);
                 client.DeliveryFormat = config.DeliveryFormat;
                 client.UseDefaultCredentials = config.Network.UseDefaultCredentials;
-                client.Credentials = config.Network.Username.HasText() ? new NetworkCredential(config.Network.Username, config.Network.Password) : null;
+
+                if (config.Network.Username.HasText())
+                {
+                    var ce = new CryptorEngine(SmtpConfigurationEntity.GetCriptoKey());
+                    var password = ce.Decrypt(config.Network.Password);
+
+                    client.Credentials = new NetworkCredential(config.Network.Username, password);
+                }
+                else
+                {
+                    client.Credentials = null;
+                }
+
                 client.EnableSsl = config.Network.EnableSSL;
 
                 foreach (var cc in config.Network.ClientCertificationFiles)

@@ -59,6 +59,8 @@ namespace Signum.Entities.Mailing
         {
             return ToStringExpression.Evaluate(this);
         }
+
+        public static Func<string> GetCriptoKey = () => "My smtp encription key";
     }
 
 
@@ -66,6 +68,13 @@ namespace Signum.Entities.Mailing
     public static class SmtpConfigurationOperation
     {
         public static ExecuteSymbol<SmtpConfigurationEntity> Save;
+        public static ExecuteSymbol<SmtpConfigurationEntity> SetPassword;
+    }
+
+    public enum SmtpConfigurationMessage
+    {
+        NewPassword,
+        EnterTheNewPassword,
     }
 
     [Serializable]

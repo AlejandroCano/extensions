@@ -58,6 +58,7 @@ namespace Signum.Entities.Mailing
             return "{0} ({1})".FormatWith(Username, Host);
         }
 
+        public static Func<string> GetCriptoKey = () => "My pop3 encription key";
     }
 
     [AutoInit]
@@ -66,6 +67,7 @@ namespace Signum.Entities.Mailing
         public static ExecuteSymbol<Pop3ConfigurationEntity> Save;
         public static ConstructSymbol<Pop3ReceptionEntity>.From<Pop3ConfigurationEntity> ReceiveEmails;
         public static ConstructSymbol<Pop3ReceptionEntity>.From<Pop3ConfigurationEntity> ReceiveLast15Emails;
+        public static ExecuteSymbol<Pop3ConfigurationEntity> SetPassword;
     }
 
     [AutoInit]

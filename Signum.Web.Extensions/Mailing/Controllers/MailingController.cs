@@ -15,6 +15,8 @@ using System.Web;
 using System.Web.Mvc;
 using Signum.Web.Operations;
 using Signum.Engine.Mailing.Pop3;
+using Signum.Entities.Authorization;
+using Signum.Web.Auth;
 
 namespace Signum.Web.Mailing
 {
@@ -85,6 +87,28 @@ namespace Signum.Web.Mailing
                 new JsExtensions.JsTypeInfo[0] :
                 implementations.Value.ToJsTypeInfos(isSearch: false, prefix: "")
             };
+        }
+
+        [HttpPost]
+        public ActionResult SetSmtpPasswordOnOk()
+        {
+            var newPassword = this.ParseValue<string>("newPassword");
+
+            var smtp = this.ExtractLite<SmtpConfigurationEntity>()
+                .ExecuteLite(SmtpConfigurationOperation.SetPassword, newPassword);
+            
+            return this.DefaultExecuteResult(smtp);
+        }
+
+        [HttpPost]
+        public ActionResult SetPop3PasswordOnOk()
+        {
+            var newPassword = this.ParseValue<string>("newPassword");
+
+            var pop3 = this.ExtractLite<Pop3ConfigurationEntity>()
+                .ExecuteLite(Pop3ConfigurationOperation.SetPassword, newPassword);
+            
+            return this.DefaultExecuteResult(pop3);
         }
     }
 }

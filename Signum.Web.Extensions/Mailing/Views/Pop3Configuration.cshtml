@@ -7,7 +7,12 @@
     @Html.ValueLine(sc, s => s.Port)
     @Html.ValueLine(sc, s => s.Host)
     @Html.ValueLine(sc, s => s.Username)
-    @Html.ValueLine(sc, s => s.Password, vl => vl.ValueHtmlProps.Add("type", "password"))
+    @Html.ValueLine(sc, s => s.Password, vl =>
+{
+    vl.Visible = sc.Value.Password.IsNullOrEmpty();
+    vl.ValueHtmlProps.Add("type", "password");
+})
+
     @Html.ValueLine(sc, s => s.EnableSSL)
     @Html.ValueLine(sc, s => s.ReadTimeout)
     @Html.ValueLine(sc, s => s.DeleteMessagesAfter)

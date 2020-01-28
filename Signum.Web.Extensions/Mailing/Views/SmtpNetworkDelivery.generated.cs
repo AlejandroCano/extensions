@@ -107,47 +107,53 @@ Write(Html.ValueLine(sc, s => s.Username));
             
             #line 8 "..\..\Mailing\Views\SmtpNetworkDelivery.cshtml"
                                         
-    
-            
-            #line default
-            #line hidden
-            
-            #line 9 "..\..\Mailing\Views\SmtpNetworkDelivery.cshtml"
-Write(Html.ValueLine(sc, s => s.Password, vl => vl.ValueHtmlProps.Add("type", "password")));
 
-            
-            #line default
-            #line hidden
-            
-            #line 9 "..\..\Mailing\Views\SmtpNetworkDelivery.cshtml"
-                                                                                         
     
             
             #line default
             #line hidden
             
             #line 10 "..\..\Mailing\Views\SmtpNetworkDelivery.cshtml"
+Write(Html.ValueLine(sc, s => s.Password, vl =>
+{
+    vl.Visible = sc.Value.Password.IsNullOrEmpty();
+    vl.ValueHtmlProps.Add("type", "password");
+}));
+
+            
+            #line default
+            #line hidden
+            
+            #line 14 "..\..\Mailing\Views\SmtpNetworkDelivery.cshtml"
+  
+
+    
+            
+            #line default
+            #line hidden
+            
+            #line 16 "..\..\Mailing\Views\SmtpNetworkDelivery.cshtml"
 Write(Html.ValueLine(sc, s => s.EnableSSL));
 
             
             #line default
             #line hidden
             
-            #line 10 "..\..\Mailing\Views\SmtpNetworkDelivery.cshtml"
+            #line 16 "..\..\Mailing\Views\SmtpNetworkDelivery.cshtml"
                                          
     
             
             #line default
             #line hidden
             
-            #line 11 "..\..\Mailing\Views\SmtpNetworkDelivery.cshtml"
+            #line 17 "..\..\Mailing\Views\SmtpNetworkDelivery.cshtml"
 Write(Html.EntityRepeater(sc, s => s.ClientCertificationFiles));
 
             
             #line default
             #line hidden
             
-            #line 11 "..\..\Mailing\Views\SmtpNetworkDelivery.cshtml"
+            #line 17 "..\..\Mailing\Views\SmtpNetworkDelivery.cshtml"
                                                              
 }
 
