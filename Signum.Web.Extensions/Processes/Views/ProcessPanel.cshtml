@@ -2,7 +2,7 @@
 @using Signum.Engine.Processes
 @using Signum.Web.Processes
 @model ProcessLogicState
-<div id="processMainDiv">
+<div id="processExternalDiv">
     <h2>ProcessLogic state</h2>
     <div>
         <a href="@Url.Action((ProcessController pc) => pc.Stop())" class="sf-button btn btn-default active" style="@(Model.Running ? "" : "display:none");color:red" id="sfProcessDisable">Stop </a>

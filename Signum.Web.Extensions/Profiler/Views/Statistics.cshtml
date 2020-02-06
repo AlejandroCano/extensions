@@ -4,15 +4,17 @@
 @{           
     SqlProfileResumeOrder order = ViewBag.Order;
 }
-<h2>@ViewData[ViewDataKeys.Title]</h2>
-<div>
-  @Html.Partial(ProfilerClient.ViewPrefix.Formato("ProfilerButtons"))
-  @Html.ActionLink("Root Entries", "Heavy", new {@class = "sf-button" })
-</div>
+<div id="profilerExternalDiv">
+    <h2>@ViewData[ViewDataKeys.Title]</h2>
+    <div>
+        @Html.Partial(ProfilerClient.ViewPrefix.Formato("ProfilerButtons"))
+        @Html.ActionLink("Root Entries", "Heavy", new { @class = "sf-button" })
+    </div>
 
-@Html.Partial(ProfilerClient.ViewPrefix.Formato("StatisticsTable"))
-<script>
-    $(function () {
-        @(ProfilerClient.Module["initStats"]());
-    });
-</script>
+    @Html.Partial(ProfilerClient.ViewPrefix.Formato("StatisticsTable"))
+    <script>
+        $(function () {
+            @(ProfilerClient.Module["initStats"]());
+        });
+    </script>
+</div>
