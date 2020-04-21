@@ -130,7 +130,7 @@ function EntrieListPath({ width, entries }: { width: number, entries: HeavyProfi
     if (e.ctrlKey) {
       window.open(Navigator.toAbsoluteUrl(url));
     } else {
-      Navigator.history.push(url);
+      Navigator.getHistory().push(url);
     }
   }
 

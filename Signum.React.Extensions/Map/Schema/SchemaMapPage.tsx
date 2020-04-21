@@ -108,7 +108,7 @@ export default function SchemaMapPage(p: RouteComponentProps<{}>) {
       ...tables, filter: filter, color: color
     };
 
-    const url = Navigator.history.createHref({ pathname: "~/map", search: QueryString.stringify(query) });
+    const url = Navigator.getHistory().createHref({ pathname: "~/map", search: QueryString.stringify(query) });
 
     window.open(url);
   }
@@ -141,7 +141,8 @@ export default function SchemaMapPage(p: RouteComponentProps<{}>) {
       </div>
     );
   }
-  if (Navigator.Expander.onGetExpanded && !Navigator.Expander.onGetExpanded())
+  var onGetExpanded = Navigator.Expander.onGetExpanded();
+  if (onGetExpanded && !onGetExpanded())
     return null;
 
   return (

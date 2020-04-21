@@ -134,7 +134,7 @@ export class TreeViewer extends React.Component<TreeViewerProps, TreeViewerState
     if (ev.ctrlKey || ev.button == 1)
       window.open(path);
     else
-      Navigator.history.push(path);
+      Navigator.getHistory().push(path);
   };
 
   getCurrentUrl() {

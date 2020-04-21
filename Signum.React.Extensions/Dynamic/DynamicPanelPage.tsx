@@ -40,7 +40,7 @@ export default function DynamicPanelPage(p: DynamicPanelProps) {
 
 
   function handleSelect(key: any /*string*/) {
-    Navigator.history.push("~/dynamic/panel?step=" + key);
+    Navigator.getHistory().push("~/dynamic/panel?step=" + key);
   }
 
   function handleErrorClick(e: React.MouseEvent<any>) {

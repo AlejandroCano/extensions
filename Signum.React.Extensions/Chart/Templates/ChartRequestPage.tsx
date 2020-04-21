@@ -40,7 +40,7 @@ export default React.memo(function ChartRequestPage(p: ChartRequestPageProps) {
 
   function changeUrl(cr: ChartRequestModel, uc?: Lite<UserChartEntity>) {
     ChartClient.Encoder.chartPathPromise(cr, uc)
-      .then(path => Navigator.history.replace(path))
+      .then(path => Navigator.getHistory().replace(path))
       .done();
   }
 

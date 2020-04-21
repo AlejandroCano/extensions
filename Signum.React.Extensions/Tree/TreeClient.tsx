@@ -93,7 +93,7 @@ export function treePath(typeName: string, filterOptions?: FilterOption[]): stri
   if (filterOptions)
     Finder.Encoder.encodeFilters(query, filterOptions);
 
-  return Navigator.history.createHref({ pathname: "~/tree/" + typeName, search: QueryString.stringify(query) });
+  return Navigator.getHistory().createHref({ pathname: "~/tree/" + typeName, search: QueryString.stringify(query) });
 }
 
 export function hideSiblingsAndIsDisabled(ti: TypeInfo) {

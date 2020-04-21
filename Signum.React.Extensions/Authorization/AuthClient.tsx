@@ -21,7 +21,7 @@ import Login, { LoginWithWindowsButton } from './Login/Login';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { AuthMessage } from './Signum.Entities.Authorization'
 
-Services.AuthTokenFilter.addAuthToken = addAuthToken;
+Services.AuthTokenFilter.setAddAuthTokenFunc(addAuthToken);
 
 export function registerUserTicketAuthenticator() {
   authenticators.push(loginFromCookie);
@@ -212,14 +212,14 @@ export function navigatorIsCreable(typeName: PseudoType, options?: Navigator.IsC
 }
 
 export function currentUser(): UserEntity {
-  return Navigator.currentUser as UserEntity;
+  return Navigator.getCurrentUser() as UserEntity;
 }
 
 export const onCurrentUserChanged: Array<(newUser: UserEntity | undefined, avoidReRender?: boolean) => void> = [];
 
 export function setCurrentUser(user: UserEntity | undefined, avoidReRender?: boolean) {
 
-  const changed = !is(Navigator.currentUser, user, true);
+  const changed = !is(Navigator.getCurrentUser(), user, true);
 
   Navigator.setCurrentUser(user);
 
@@ -255,7 +255,7 @@ export function addAuthToken(options: Services.AjaxOptions, makeCall: () => Prom
 
       if (e.httpError.exceptionType?.endsWith(".AuthenticationException")) {
         setAuthToken(undefined, undefined);
-        Navigator.history?.push("~/auth/login");
+        Navigator.getHistory()?.push("~/auth/login");
       }
 
       throw e;
@@ -276,8 +276,9 @@ export function setAuthToken(authToken: string | undefined, authenticationType: 
 }
 
 export function autoLogin(): Promise<UserEntity | undefined> {
-  if (Navigator.currentUser)
-    return Promise.resolve(Navigator.currentUser as UserEntity);
+  var currentUser = Navigator.getCurrentUser();
+  if (currentUser)
+    return Promise.resolve(currentUser as UserEntity);
 
   if (getAuthToken())
     return API.fetchCurrentUser().then(u => {

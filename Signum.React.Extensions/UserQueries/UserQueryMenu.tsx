@@ -135,9 +135,10 @@ export default function UserQueryMenu(p: UserQueryMenuProps) {
 
     const qe = await Finder.API.fetchQueryEntity(getQueryKey(fo.queryName));
 
+    const currentUser = Navigator.getCurrentUser();
     const uq = await Navigator.view(UserQueryEntity.New({
       query: qe,
-      owner: Navigator.currentUser && toLite(Navigator.currentUser),
+      owner: currentUser && toLite(currentUser),
       groupResults: fo.groupResults,
       filters: qfs.map(f => newMListElement(UserAssetClient.Converter.toQueryFilterEmbedded(f))),
       includeDefaultFilters: fo.includeDefaultFilters,

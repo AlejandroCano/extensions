@@ -24,10 +24,10 @@ export default function TreePage(p: TreePageProps) {
   function changeUrl() {
     var newPath = treeViewRef.current!.getCurrentUrl();
 
-    var currentLocation = Navigator.history.location;
+    var currentLocation = Navigator.getHistory().location;
 
     if (currentLocation.pathname + currentLocation.search != newPath)
-      Navigator.history.replace(newPath);
+      Navigator.getHistory().replace(newPath);
   }
 
   var ti = getTypeInfo(p.match.params.typeName);

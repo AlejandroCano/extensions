@@ -42,7 +42,7 @@ export default function WorkflowActivityModelComponent(p : WorkflowActivityModel
 
       const typeName = p.ctx.value.mainEntityType.cleanName;
 
-      Navigator.viewDispatcher.getViewNames(typeName)
+      Navigator.getViewDispatcher().getViewNames(typeName)
         .then(vn => setViewNames(vn))
         .done();
 
@@ -147,7 +147,7 @@ export default function WorkflowActivityModelComponent(p : WorkflowActivityModel
 
         return Navigator.API.fetchAndForget(lite).then(entity => {
 
-          const vp = Navigator.viewDispatcher.getViewPromise(entity, viewName || undefined);
+          const vp = Navigator.getViewDispatcher().getViewPromise(entity, viewName || undefined);
           return Navigator.view(entity,
             {
               getViewPromise: e => vp,

@@ -40,7 +40,7 @@ export default function ResetPassword(p: RouteComponentProps<{}>) {
 
           setSuccess(true);
           //Navigator.resetUI();
-          Navigator.history.push("~/auth/ResetPassword?code=OK");
+          Navigator.getHistory().push("~/auth/ResetPassword?code=OK");
         })
         .catch((e: ValidationError) => {
           if (e.modelState)

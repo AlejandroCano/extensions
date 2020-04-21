@@ -87,7 +87,7 @@ export default class CaseFramePage extends React.Component<CaseFramePageProps, C
       return WorkflowClient.createNewCase(parseId(ti, routeParams.workflowId), (routeParams.mainEntityStrategy as WorkflowMainEntityStrategy))
         .then(pack => {
           if (!pack)
-            Navigator.history.goBack();
+            Navigator.getHistory().goBack();
           else
             this.setState({ pack, refreshCount: 0 });
         });
@@ -105,7 +105,7 @@ export default class CaseFramePage extends React.Component<CaseFramePageProps, C
   }
 
   onClose() {
-    Navigator.history.push(WorkflowClient.getDefaultInboxUrl());
+    Navigator.getHistory().push(WorkflowClient.getDefaultInboxUrl());
   }
 
   entityComponent?: React.Component<any, any> | null;
@@ -139,7 +139,7 @@ export default class CaseFramePage extends React.Component<CaseFramePageProps, C
         if (newPack) {
           let newActivity = newPack.entity as CaseActivityEntity;
           if (pack.activity.isNew && !newActivity.isNew) {
-            Navigator.history.push("~/workflow/activity/" + newActivity.id);
+            Navigator.getHistory().push("~/workflow/activity/" + newActivity.id);
             return;
           }
           else {

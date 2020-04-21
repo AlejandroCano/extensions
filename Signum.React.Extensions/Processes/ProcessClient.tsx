@@ -139,7 +139,7 @@ function defaultConstructProcessFromMany(coc: Operations.ContextualOperationCont
 
       const es = Navigator.getSettings(pack.entity.Type);
       if (es?.avoidPopup || event.ctrlKey || event.button == 1) {
-        Navigator.history.push('~/create/', pack);
+        Navigator.getHistory().push('~/create/', pack);
         return;
       }
       else {

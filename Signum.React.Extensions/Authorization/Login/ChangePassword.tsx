@@ -34,7 +34,7 @@ export default function ChangePassword() {
           AuthClient.setAuthToken(lr.token, lr.authenticationType);
           AuthClient.setCurrentUser(lr.userEntity);
           Navigator.resetUI();
-          Navigator.history.push(Navigator.toAbsoluteUrl("~/auth/changePasswordSuccess"));
+          Navigator.getHistory().push(Navigator.toAbsoluteUrl("~/auth/changePasswordSuccess"));
         })
         .catch((e: ValidationError) => {
           if (e.modelState)

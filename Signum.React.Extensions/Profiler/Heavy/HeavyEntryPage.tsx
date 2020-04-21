@@ -224,7 +224,7 @@ export function HeavyProfilerDetailsD3(p: HeavyProfilerDetailsD3Props) {
           window.open(Navigator.toAbsoluteUrl(url));
         }
         else {
-          Navigator.history.push(url);
+          Navigator.getHistory().push(url);
         }
       }
     }

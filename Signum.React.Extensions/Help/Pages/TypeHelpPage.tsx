@@ -19,7 +19,7 @@ import * as HelpClient from '../HelpClient';
 import { mlistItemContext } from '@framework/TypeContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-(window as any).myHistory = Navigator.history;
+(window as any).myHistory = Navigator.getHistory();
 
 export default function TypeHelpPage(p: RouteComponentProps<{ cleanName: string }>) {
 

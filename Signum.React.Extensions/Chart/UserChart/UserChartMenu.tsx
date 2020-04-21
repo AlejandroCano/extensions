@@ -85,8 +85,9 @@ export default function UserChartMenu(p : UserChartMenuProps){
       filters: fos.map(fo => UserAssetClient.Converter.toFilterNode(fo))
     });
 
+    const currentUser = Navigator.getCurrentUser();
     const uc = await Navigator.view(UserChartEntity.New({
-      owner: Navigator.currentUser && toLite(Navigator.currentUser),
+      owner: currentUser && toLite(currentUser),
       query: query,
       chartScript: cr.chartScript,
       filters: qfs.map(f => newMListElement(UserAssetClient.Converter.toQueryFilterEmbedded(f))),

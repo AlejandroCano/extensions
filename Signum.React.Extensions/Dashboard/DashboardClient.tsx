@@ -47,7 +47,12 @@ export function start(options: { routes: JSX.Element[] }) {
   UserAssetClient.start({ routes: options.routes });
   UserAssetClient.registerExportAssertLink(DashboardEntity);
 
-  Constructor.registerConstructor(DashboardEntity, () => DashboardEntity.New({ owner: Navigator.currentUser && toLite(Navigator.currentUser) }));
+  Constructor.registerConstructor(DashboardEntity, () => {
+    const currentUser = Navigator.getCurrentUser();
+    return DashboardEntity.New({
+      owner: currentUser && toLite(currentUser)
+    })
+  });
 
   Navigator.addSettings(new EntitySettings(DashboardEntity, e => import('./Admin/Dashboard')));
 

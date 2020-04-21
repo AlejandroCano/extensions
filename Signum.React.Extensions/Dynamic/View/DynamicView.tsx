@@ -75,7 +75,7 @@ export default class DynamicViewEntityComponent extends React.Component<DynamicV
     }
 
     if (ctx.value.entityType)
-      Navigator.viewDispatcher.getViewOverrides(ctx.value.entityType.cleanName)
+      Navigator.getViewDispatcher().getViewOverrides(ctx.value.entityType.cleanName)
         .then(vos => this.setState({ viewOverrides: vos }))
         .done();
     else

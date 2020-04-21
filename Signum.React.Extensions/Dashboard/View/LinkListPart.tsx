@@ -12,7 +12,7 @@ export default function LinkListPart(p: PanelPartContentProps<LinkListPartEntity
           .map((le, i) =>
             <li key={i} >
               <a href={Navigator.toAbsoluteUrl(le.link!)}
-                onClick={le.link!.startsWith("~") ? (e => { e.preventDefault(); Navigator.history.push(le.link!) }) : undefined}
+                onClick={le.link!.startsWith("~") ? (e => { e.preventDefault(); Navigator.getHistory().push(le.link!) }) : undefined}
                 title={le.label!}>
                 {le.label}
               </a>

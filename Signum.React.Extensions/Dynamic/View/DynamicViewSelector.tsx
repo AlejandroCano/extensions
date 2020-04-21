@@ -18,7 +18,7 @@ import { ModulesHelp } from "./ModulesHelp";
 export default function DynamicViewSelectorComponent(p: { ctx: TypeContext<DynamicViewSelectorEntity> }) {
 
   const forceUpdate = useForceUpdate();
-  const viewNames = useAPI(() => !p.ctx.value.entityType ? Promise.resolve(undefined) : Navigator.viewDispatcher.getViewNames(p.ctx.value.entityType!.cleanName), [p.ctx.value.entityType]);
+  const viewNames = useAPI(() => !p.ctx.value.entityType ? Promise.resolve(undefined) : Navigator.getViewDispatcher().getViewNames(p.ctx.value.entityType!.cleanName), [p.ctx.value.entityType]);
 
   const exampleEntityRef = React.useRef<Entity | undefined>(undefined);
   const scriptChangedRef = React.useRef(false);

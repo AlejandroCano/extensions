@@ -40,7 +40,7 @@ export function MarkdownText({ text, className }: { text: string | null | undefi
       if (href != null && href.startsWith(Navigator.toAbsoluteUrl("~/"))) {
         e.preventDefault();
         e.stopPropagation();
-        Navigator.history.push(href);
+        Navigator.getHistory().push(href);
       }
     }
   }
