@@ -498,11 +498,12 @@ namespace Signum.Engine.Authorization
                     return Expression.And(Expression.Not(exp), acum);
             });
 
-            var cleaned = DbQueryProvider.Clean(expression, false, null)!;
+            return DbQueryProvider.Clean(expression, false, null)!;
+            //var cleaned = DbQueryProvider.Clean(expression, false, null)!;
 
-            var orsSimplified = AndOrSimplifierVisitor.SimplifyOrs(cleaned);
+            //var orsSimplified = AndOrSimplifierVisitor.SimplifyOrs(cleaned);
 
-            return orsSimplified;
+            //return orsSimplified;
         }
 
 
@@ -722,9 +723,12 @@ namespace Signum.Engine.Authorization
             {
                 var orGroups = OrAndList(b);
 
-                var newOrGroups = orGroups.Where(og => !orGroups.Any(og2 => og2 != og && og2.IsMoreSimpleAndGeneralThan(og, Comparer))).ToList();
+                
+                var newOrGroups = orGroups.Where(og => !orGroups.Any(og2 => og2 != og && og2.IsMoreSimpleAndGeneralThan(og, Comparer)));
+                //var newOrGroups = orGroups.Where(og => !orGroups.Any(og2 => og2 != og && og2.IsMoreSimpleAndGeneralThan(og, Comparer))).ToList();
 
-                return newOrGroups.Select(andGroup => andGroup.Aggregate(Expression.AndAlso)).Aggregate(Expression.OrElse);
+                return newOrGroups.Select(andGroup => andGroup.Aggregate(Expression.Or)).Aggregate(Expression.And);
+                //return newOrGroups.Select(andGroup => andGroup.Aggregate(Expression.AndAlso)).Aggregate(Expression.OrElse);
             }
 
             return expr;
@@ -732,7 +736,8 @@ namespace Signum.Engine.Authorization
 
         static Expression[][] OrAndList(Expression expression)
         {
-            if (expression is BinaryExpression b && (b.NodeType == ExpressionType.Or || b.NodeType == ExpressionType.OrElse))
+            if (expression is BinaryExpression b && b.NodeType == ExpressionType.Or)
+            //if (expression is BinaryExpression b && (b.NodeType == ExpressionType.Or || b.NodeType == ExpressionType.OrElse))
             {
                 return OrAndList(b.Left).Concat(OrAndList(b.Right)).ToArray();
             }
@@ -747,7 +752,8 @@ namespace Signum.Engine.Authorization
 
         static Expression[] AndList(Expression expression)
         {
-            if (expression is BinaryExpression b && (b.NodeType == ExpressionType.And || b.NodeType == ExpressionType.AndAlso))
+            if (expression is BinaryExpression b && b.NodeType == ExpressionType.And)
+                //if (expression is BinaryExpression b && (b.NodeType == ExpressionType.And || b.NodeType == ExpressionType.AndAlso))
                 return AndList(b.Left).Concat(AndList(b.Right)).ToArray();
             else
                 return new[] { expression };
