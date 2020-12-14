@@ -41,11 +41,13 @@ namespace Signum.React.MachineLearning
 
             return new PredictDictionary(pctx.Predictor, null, null)
             {
+#pragma warning disable CS8619 // La nulabilidad de los tipos de referencia del valor no coincide con el tipo de destino
                 MainQueryValues = pctx.Predictor.MainQuery.Columns
                 .Select((col, i) => new { col, request.columns[i].value })
                 .Where(a => a.col!.Usage == PredictorColumnUsage.Input)
                 .Select(a => KeyValuePair.Create(a.col!, a.value))
                 .ToDictionaryEx(),
+#pragma warning restore CS8619 // La nulabilidad de los tipos de referencia del valor no coincide con el tipo de destino
 
                 SubQueries = pctx.Predictor.SubQueries.Select(sq =>
                 {
