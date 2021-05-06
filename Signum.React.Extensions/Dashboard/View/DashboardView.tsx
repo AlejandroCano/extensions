@@ -16,7 +16,7 @@ export default function DashboardView(p: { dashboard: DashboardEntity, entity?: 
 
     const [refreshKey, setRefreshKey] = React.useState(p.refreshKey);
     React.useEffect(() => {
-        debugger;
+        //debugger;
         if (refreshKey != p.refreshKey) {
             //setRefreshKey(p.refreshKey);
         }
